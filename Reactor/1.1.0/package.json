@@ -1,0 +1,16 @@
+{
+  "name": "com.kinematicsoup.reactor",
+  "version": "1.1.0",  
+  "unity": "2021.3",
+  "displayName": "Reactor Multiplayer",
+  "description": "Use Reactor Multiplayer to create and host multiplayer game servers.",
+  "keywords": ["Reactor", "Mulitplayer", "Networking", "Server", "Client", "Hosting"],  
+  "author": {
+    "name": "KinematicSoup Technologies Inc.",
+    "email": "support@kinematicsoup.com",
+    "url": "https://kinematicsoup.com/"
+  },
+  "documentationUrl": "https://docs.kinematicsoup.com/Reactor/",
+  "licensesUrl": "https://kinematicsoup.com/terms",
+  "hideInEditor": false
+}
