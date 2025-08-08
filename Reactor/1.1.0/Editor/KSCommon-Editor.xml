@@ -1,0 +1,1689 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>KSCommon-Editor</name>
+    </assembly>
+    <members>
+        <member name="T:KS.Unity.Editor.Analytics">
+            <summary>Analytics singleton for sending analytics events. This is intended for internal use only.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.Get">
+            <summary>Gets the singleton instance.</summary>
+            <returns></returns>
+        </member>
+        <member name="P:KS.Unity.Editor.Analytics.Enabled">
+            <summary>Is analytics enabled?</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.TrackEvent(System.String,System.String,System.String)">
+            <summary>Adds an event to be tracked with analytics.</summary>
+            <param name="eventName">Event name</param>
+            <param name="version">Version string to track in event.</param>
+            <param name="token">Project token</param>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.TrackDailyEvent(System.String,System.String,System.String)">
+            <summary>
+            Adds an event to be tracked with analytics if this is the first time an event with this name was
+            tracked today using this function. The next day starts at midnight utc time.
+            </summary>
+            <param name="eventName">Event name</param>
+            <param name="version">Version string to track in event.</param>
+            <param name="token">Project token</param>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.Update">
+            <summary>Updates coroutines</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.SendEventsAsync">
+            <summary>Coroutine for sending events to Mixpanel.</summary>
+            <returns>IEnumerator</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.GetIPAsync">
+            <summary>Coroutine for getting our public IP address.</summary>
+            <returns>IEnumerator</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.SendWebRequest(UnityEngine.Networking.UnityWebRequest,KS.Reactor.ksJSON)">
+            <summary>Coroutine to send a web request and wait for the response.</summary>
+            <param name="request">Request to send.</param>
+            <param name="json">Optional json to send in the request. If not null, the method will be POST.</param>
+            <returns>IEnumerator</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.GetResponse(UnityEngine.Networking.UnityWebRequest)">
+            <summary>Gets the response string from a Unity web request.</summary>
+            <param name="request">Request to get response string from.</param>
+            <returns>Response string. May be null.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.HandleResponse(UnityEngine.Networking.UnityWebRequest)">
+            <summary>Handles the reponse to a track request from Mixpanel.</summary>
+            <param name="request">Web request</param>
+            <returns>True if there were no network errors (status code was 200).</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.BackUpPendingEvents">
+            <summary>
+            Writes pending events to editor prefs so we can resend them if Unity closes before they are sent.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.Analytics.LogExceptionsOnly(KS.Reactor.ksLog.Level,System.String,System.String,System.Exception,System.Object)">
+            <summary>Log handler that only logs messages with exceptions.</summary>
+            <param name="level">Level of the message.</param>
+            <param name="channel">Channel the message was sent to.</param>
+            <param name="message">Message to log. May be null if exception is provided.</param>
+            <param name="exception">Exception to log. May be null if message is provided.</param>
+            <param name="context">Object related to this message.</param>
+        </member>
+        <member name="T:KS.Unity.Editor.KeyValueConfig">
+            Convenience class for reading and writing json config files.
+        </member>
+        <member name="P:KS.Unity.Editor.KeyValueConfig.Path">
+            Config file path
+        </member>
+        <member name="M:KS.Unity.Editor.KeyValueConfig.Get(System.String,System.Boolean)">
+            Gets the config at the given path. Loads the config if it's not already loaded or was modified since it was
+            last loaded.
+            
+            @param   string path to config file.
+            @param   bool warnMissingFile - if true, will log a warning when loading if the config file isn't found.
+            @return  KeyValueConfig loaded from path.
+        </member>
+        <member name="M:KS.Unity.Editor.KeyValueConfig.#ctor(System.String)">
+            Constructor
+            
+            @param   string path to config file.
+        </member>
+        <member name="P:KS.Unity.Editor.KeyValueConfig.Item(System.String)">
+            Gets or sets a config value by key.
+        </member>
+        <member name="M:KS.Unity.Editor.KeyValueConfig.GetValue(System.String,KS.Reactor.ksJSON)">
+            Gets a config value for a key.
+            
+            @param   string key to get value for.
+            @param   ksJSON defaultValue to return if the key is not in the config.
+            @return  ksJSON value for the key.
+        </member>
+        <member name="M:KS.Unity.Editor.KeyValueConfig.ReloadIfStale">
+            Reloads the config if it was modified since the last time we loaded it.
+        </member>
+        <member name="M:KS.Unity.Editor.KeyValueConfig.Save">
+            Writes the config file.
+        </member>
+        <member name="M:KS.Unity.Editor.KeyValueConfig.Load(System.Boolean)">
+            Loads the config file.
+            
+            @param   bool warnMissingFile - if true, will log a warning if the config file isn't found.
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalytics">
+            <summary>Class for sending analytics events. This is intended for internal use only.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Get">
+            <summary>Gets the analytics instance configured for the Reactor analytics project.</summary>
+            <returns></returns>
+        </member>
+        <member name="P:KS.Unity.Editor.ksAnalytics.Enabled">
+            <summary>Is analytics enabled?</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalytics.Events">
+            <summary>Analytics event names</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.INSTALL">
+            <summary>The Reactor plugin was newly installed.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.UPGRADE">
+            <summary>The user updated to a newer version of Reactor.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.LOCAL_SERVER_START">
+            <summary>The user started a local server. Sent at most once per day.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.LOCAL_CLUSTER_START">
+            <summary>The user started a local cluster. Sent at most once per day.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.#ctor(System.String,System.String)">
+            <summary>Constructor</summary>
+            <param name="token">Project token</param>
+            <param name="version">Version sting to send with event data.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.TrackEvent(System.String)">
+            <summary>Adds an event to be tracked with analytics.</summary>
+            <param name="eventName">Event name</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.TrackDailyEvent(System.String)">
+            <summary>
+            Adds an event to be tracked with analytics if this is the first time an event with this name was
+            tracked today using this function. The next day starts at midnight utc time.
+            </summary>
+            <param name="eventName">Event name</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAuthenticatedMenu">
+            <summary>Base class for menus that require users to be logged in.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAuthenticatedMenu.SetLoginMenu(System.Type)">
+            <summary>Set the required login menu</summary>
+            <param name="loginMenuType">Menu type</param>
+        </member>
+        <member name="P:KS.Unity.Editor.ksAuthenticatedMenu.DestroyOnClose">
+            <summary>Session menus are destroyed on close</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksAuthenticatedMenu.Icon">
+            <summary>Icon</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAuthenticatedMenu.Draw(KS.Unity.Editor.ksWindow)">
+            <summary>
+            Check the login state during layout events and redirect to the login menu if the user has not logged in.
+            </summary>
+            <param name="window">gui window</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAuthenticatedMenu.OnClose(KS.Unity.Editor.ksWindow)">
+            <summary>Called when the menu is closed.</summary>
+            <param name="window">gui window</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAuthenticatedMenu.OnOpen(KS.Unity.Editor.ksWindow)">
+            <summary>Called when the menu is opened.</summary>
+            <param name="window">gui window.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAuthenticatedMenu.OnDraw(KS.Unity.Editor.ksWindow)">
+            <summary>Draws the GUI.</summary>
+            <param name="window">gui window</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksBaseLoginMenu`1">
+            <summary>Kinematicsoup Service Login GUI</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksBaseLoginMenu`1.Instance">
+            <summary>Singleton Instance</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.OnEnable">
+            <summary>
+            Unity OnEnable called after deserialization. Sets this to the singleton instance. Destroys this
+            if the singleton instance is already set.
+            </summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksBaseLoginMenu`1.DestroyOnClose">
+            <summary>Destroy this menu on close.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.OnOpen(KS.Unity.Editor.ksWindow)">
+            <summary>Called when the menu is opened.</summary>
+            <param name="window">window that opened the menu.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.OnClose(KS.Unity.Editor.ksWindow)">
+            <summary>Clear the password when the menu is closed if the password is not saved.</summary>
+            <param name="window">window that closed the menu.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.Draw(KS.Unity.Editor.ksWindow)">
+            <summary>Creates the GUI.</summary>
+            <param name="window">window the GUI is for.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.DrawPasswordField(UnityEngine.Rect)">
+            <summary>Draw the password field.</summary>
+            <param name="rect">password field bounds</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.CheckLayout(KS.Unity.Editor.ksWindow)">
+            <summary>Check and apply updates that affect the gui layout</summary>
+            <param name="window">gui window</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.OnLogin(KS.Reactor.ksJSON,System.String)">
+            <summary>Handle a login response</summary>
+            <param name="response">response data</param>
+            <param name="error">error message</param>
+        </member>
+        <member name="P:KS.Unity.Editor.ksBaseLoginMenu`1.ConsoleURL">
+            <summary>Get the console url</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.Login">
+            <summary>Send a login request</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.GetNextMenu(KS.Unity.Editor.ksWindow)">
+            <summary>Get the menu to show when the user is logged in.</summary>
+            <param name="window"></param>
+            <returns>Menu to show when the user is logged in.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksDictionaryDrawer">
+            <summary>Custom property drawer for <see cref="T:KS.Unity.ksSerializableDictionary`2"/></summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksDictionaryDrawer.State">
+            <summary>Per-property state that persists between Unity serializations.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksDictionaryDrawer.State.Default">
+            <summary>The default state.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksDictionaryDrawer.State.Expanded">
+            <summary>Is the property expanded?</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksDictionaryDrawer.State.KeyColumnRatio">
+            <summary>
+            The fraction of the total width used by the key column. The value column uses the remaining width. The
+            user can drag a slider to change the width of the columns.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.State.#ctor(System.Boolean,System.Single)">
+            <summary>Constructor</summary>
+            <param name="expanded">Is the property expanded?</param>
+            <param name="keyColumnRatio">The fraction of the total width used by the key column.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.State.op_Equality(KS.Unity.Editor.ksDictionaryDrawer.State,KS.Unity.Editor.ksDictionaryDrawer.State)">
+            <summary>Checks if two states are equal.</summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+            <returns>True if the states are equal.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.State.op_Inequality(KS.Unity.Editor.ksDictionaryDrawer.State,KS.Unity.Editor.ksDictionaryDrawer.State)">
+            <summary>Checks if two states are not equal.</summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+            <returns>True if the states are not equal.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.State.Equals(System.Object)">
+            <summary>Checks if this state is equal to an object.</summary>
+            <param name="obj"></param>
+            <returns>True if the object is the same as this state.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.State.GetHashCode">
+            <summary>Gets the hash code for this state.</summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksDictionaryDrawer.StateMap">
+            <summary>Stores property state.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksDictionaryDrawer.StateMap.DefaultState">
+            <summary>The default property state.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.OnGUI(UnityEngine.Rect,UnityEditor.SerializedProperty,UnityEngine.GUIContent)">
+            <summary>Draws the property.</summary>
+            <param name="position">Position to draw at.</param>
+            <param name="property">Property to draw.</param>
+            <param name="label">Label for the property.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.GetPropertyHeight(UnityEditor.SerializedProperty,UnityEngine.GUIContent)">
+            <summary>Gets the height of the property.</summary>
+            <param name="property">Property to get height for.</param>
+            <param name="label">Property label.</param>
+            <returns>The height of the property.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.SetToDefaultValue(UnityEditor.SerializedProperty)">
+            <summary>Sets a property to the default value.</summary>
+            <param name="property">Property to set to the default value.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksDictionaryDrawer.GetPropertyHeight(UnityEditor.SerializedProperty)">
+            <summary>Gets the height of a property.</summary>
+            <param name="property">Property to get height for.</param>
+            <returns>The height of the property.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksEditorEvents">
+            <summary>Useful editor events that Unity doesn't provide.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksEditorEvents.CompileStartHandler">
+            <summary>Compile start event handler.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksEditorEvents.FocusChangeHandler">
+            <summary>Focus change handler.</summary>
+            <param name="focused">true if Unity is the focused application.</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksEditorEvents.ImportAssetsHandler">
+            <summary>Import assets event handler.</summary>
+            <param name="paths">paths to imported assets.</param>
+        </member>
+        <member name="E:KS.Unity.Editor.ksEditorEvents.OnImportAssets">
+            <summary>Invoked when assets are moved or imported.</summary>
+        </member>
+        <member name="E:KS.Unity.Editor.ksEditorEvents.OnCompileStart">
+            <summary>
+            Invoked right before Unity compiles scripts. From script's point of view, once scripts are compiled Unity restarts,
+            so use this to run code before the restart.
+            </summary>
+        </member>
+        <member name="E:KS.Unity.Editor.ksEditorEvents.OnFocusChange">
+            <summary>Invoked when the Unity application gains or loses focus.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorEvents.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorEvents.CheckCompile">
+            <summary>Checks if Unity is compiling scripts.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorEvents.CheckFocus">
+            <summary>
+            Check if Unity gained or lost focus, and invoke the <see cref="E:KS.Unity.Editor.ksEditorEvents.OnFocusChange"/> event accordingly.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorEvents.OnPostprocessAllAssets(System.String[],System.String[],System.String[],System.String[])">
+            <summary>
+            Called by Unity after assets are imported. Invokes the OnImportAssets event with imported and moved assets.
+            </summary>
+            <param name="importedAssets">paths to imported assets.</param>
+            <param name="deletedAssets">paths to deleted assets.</param>
+            <param name="movedAssets">paths to moved assets.</param>
+            <param name="movedFromAssetPaths">paths assets were moved from.</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksEditorUtils">
+            <summary>Editor utilities</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorUtils.IsUnityFocused">
+            <summary>Is Unity the focused application?</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorUtils.IsMPPMVirtualPlayer">
+            <summary>
+            Detects if the editor instance is a Multiplayer Playmode virtual player by checking the application
+            data path and for the presence of a MPPMVersion.json file.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.FocusInspectorWindow">
+            <summary>Focuses the inspector window. Opens it if it is not already open.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.RefreshInspectorWindow(System.Boolean)">
+            <summary>Refreshes the inspector window.</summary>
+            <param name="rebuildInspectors">if true, inspectors will be rebuilt.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.FindWindow(System.String)">
+            <summary>
+            Finds a window of a type from the UnityEditor namespace if it is open. This can be used to get instances of
+            internal Unity windows.
+            </summary>
+            <param name="className">name of editor window class to find instance of.</param>
+            <returns>window, or null if the window wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.FindWindows(System.String)">
+            <summary>
+            Finds all open windows of a type from the UnityEditor namespace. This can be used to get instances of
+            internal Unity windows.
+            </summary>
+            <param name="className">name of editor window class to find instances of.</param>
+            <returns>windows of the given class name.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.OpenWindow(System.String)">
+            <summary>
+            Opens a window of a type from the UnityEditor namespace. If a window of the type is already open, returns
+            it. This can be used to open internal Unity windows.
+            </summary>
+            <param name="className">name of editor window class to open.</param>
+            <returns>window, or null if the window could not be opened.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.CenterWindow(UnityEditor.EditorWindow,System.Single,System.Single)">
+            <summary>Resizes and centers a window in the center of the Unity editor.</summary>
+            <param name="window">window to center.</param>
+            <param name="width">width for the window in pixels.</param>
+            <param name="height">height for the window in pixels.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetEditorPosition">
+            <summary>Gets the position of the Unity editor in screen pixels.</summary>
+            <returns>position of the Unity editor.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.IsInResourcesOrAssetBundle(UnityEngine.Object)">
+            <summary>Checks if an object is an asset is in a Resources folder or an asset bundle.</summary>
+            <param name="uobj">Object to check.</param>
+            <returns>True if the object is an asset in Resources or an asset bundle.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.IsResourceOrAssetBundlePrefabInstance(UnityEngine.Object)">
+            <summary>
+            Checks if an object is an instance of a prefab from Resources or an asset bundle.
+            </summary>
+            <param name="uobj">Object to check.</param>
+            <returns>True if the object is an instance of a prefab from Resources or an asset bundle.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetAssetPath(UnityEngine.Object)">
+            <summary>
+            Gets the asset path for an asset. If the object is part of the prefab stage, gets prefab's asset path.
+            </summary>
+            <param name="asset">Asset to get path for.</param>
+            <returns>Asset path, or null if the object is not an asset or part of a prefab stage.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetPrefabStage(UnityEngine.Object)">
+            <summary>Gets the prefab stage containing a component or game object.</summary>
+            <param name="componentOrGameObject">Component or game object to get prefab stage for.</param>
+            <returns>
+            Prefab stage for the component or game object, or null if it is not part of a prefab stage.
+            </returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.SetDefineSymbol(System.String)">
+            <summary>Sets a define symbol for the current build target.</summary>
+            <param name="symbol">symbol to define.</param>
+            <returns>true if the define symbol was added. False if it was already defined.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.ClearDefineSymbol(System.String)">
+            <summary>Clears a define symbol for the current build target.</summary>
+            <param name="symbol">symbol to clear</param>
+            <returns>true if the define symbol was removed. False if it was not defined.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetPropertyValue``1(UnityEditor.SerializedProperty,UnityEngine.Object)">
+            <summary>Gets the value of a serialized property using reflection.</summary>
+            <param name="property">property to get value from.</param>
+            <param name="target">target object to get property value from. If null, uses the property target.</param>
+            <returns>value of the property.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.TryGetPropertyValue``1(UnityEditor.SerializedProperty,``0@,UnityEngine.Object)">
+            <summary>Tries to get the value of a serialized property using reflection.</summary>
+            <param name="property">property to get value from.</param>
+            <param name="value">Set to the value of the property.</param>
+            <param name="target">target object to get property value from. If null, uses the property target.</param>
+            <returns>True if the property value was retrieved successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetPropertyType(UnityEditor.SerializedProperty)">
+            <summary>Gets the type of a serialized property using reflection.</summary>
+            <param name="property">Property to get type for.</param>
+            <returns>The type of the property, or null if it could not be accessed using reflection.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetReflectionObject(UnityEditor.SerializedProperty,UnityEngine.Object)">
+            <summary>Gets a <see cref="T:KS.Unity.Editor.ksReflectionObject"/> for the field of a serialized property.</summary>
+            <param name="property">property to get field reflection object from.</param>
+            <param name="target">
+            target object to get field reflection object from. If null, uses the property target.
+            </param>
+            <returns>Reflection object for the field.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetUnityUserId">
+            <summary>
+            Get the Unity user's account ID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetUnityUserDisplayName">
+            <summary>Gets the Unity user's display name.</summary>
+            <returns>Display name</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetUserInfo">
+            <summary>
+            Gets a <see cref="T:KS.Unity.Editor.ksReflectionObject"/> for the internal Unity UserInfo object holding Unity user account
+            information.
+            </summary>
+            <returns>User infor reflection object.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorUtils.GetReleaseId">
+            <summary>
+            Get the Unity package release ID
+            </summary>
+            <returns>UUID for the current package release</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksEditorWebService">
+            <summary>This class is used to manage KinematicSoup web service requests and login state</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.Token">
+            <summary>Set / Get Authentication Token</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.IToken">
+            <summary>Get / Set the token of a non static instance</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.Email">
+            <summary>Set / Get Email Address (If the email is cleared, then clear the token as well)</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.IEmail">
+            <summary>Get / Set the email of a non static instance</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.UseStoredCredentials">
+            <summary>Return if this session uses stored email and tokens</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.Username">
+            <summary>Get username</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.IUsername">
+            <summary>Get / Set the username of a non static instance</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.AccountId">
+            <summary>Get / Set the account ID</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.IAccountId">
+            <summary>Get / Set the account ID of a non static instance</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.IsLoggedIn">
+            <summary>Check for a valid email and auth token  (Non null)</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksEditorWebService.IsLoggingIn">
+            <summary>Check if a login is in progress</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.#cctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Init">
+            <summary>Start and register updates for a coroutine manager</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Update">
+            <summary>Update the coroutine manager used for editor web requests</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Get(System.String,KS.Unity.Editor.ksEditorWebService.RequestCallback)">
+            <summary>
+            Send a web GET request which returns JSON data.
+            </summary>
+            <param name="url"></param>
+            <param name="requestCallback"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Send(KS.Reactor.ksJSON,System.String,KS.Unity.Editor.ksEditorWebService.RequestCallback)">
+            <summary>Send an editor web request to a KinematicSoup service</summary>
+            <param name="request">request parameters</param>
+            <param name="url">url</param>
+            <param name="requestCallback">callback</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Upload(KS.Reactor.ksJSON,System.IO.FileInfo[],System.String,KS.Unity.Editor.ksEditorWebService.RequestCallback)">
+            <summary>Upload files to a KinematicSoup service</summary>
+            <param name="request">request parameters</param>
+            <param name="files">list of files to upload</param>
+            <param name="url">url</param>
+            <param name="requestCallback">callback</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Login(System.String,System.String,System.String)">
+            <summary>Login to KinematicSoup Web Services</summary>
+            <param name="url">login url</param>
+            <param name="email">email</param>
+            <param name="password">password</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.Logout(System.String)">
+            <summary>Logout</summary>
+            <param name="url">logout url</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.HandleLogin(KS.Reactor.ksWebResponse)">
+            <summary>Handle a login response</summary>
+            <param name="response"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.ErrorCheck(KS.Reactor.ksWebResponse,KS.Reactor.ksJSON@,System.String@)">
+            <summary>Process a JSON separating errors (err) from clean messages (msg)</summary>
+            <param name="response">json response</param>
+            <param name="result">json result</param>
+            <param name="error">error message</param>
+            <returns>true if an error was found</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksEditorWebService.ForceLogout(System.String)">
+            <summary>Force the web service to clear the current session data.</summary>
+            <param name="reason">Reason for the logout</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksFileWatcher">
+            <summary>
+            Convenience wrapper of <see cref="T:System.IO.FileSystemWatcher"/>.
+            </summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksFileWatcher.Flags">
+            <summary>Flags for configuaring the file system watcher</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksFileWatcher.Flags.INCLUDE_SUBDIRECTORIES">
+            <summary>Watch subdirectories</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksFileWatcher.Flags.FILE_CHANGED">
+            <summary>Watch for file changes.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksFileWatcher.Flags.FILE_CREATED">
+            <summary>Watch for file creation.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksFileWatcher.Flags.FILE_DELETED">
+            <summary>Watch for file deletion.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksFileWatcher.Flags.FILE_RENAMED">
+            <summary>Watch for file renames.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksFileWatcher.Flags.ALL">
+            <summary>Watch for all file events and watch subdirectories.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.#ctor(System.IO.FileSystemEventHandler,System.String,System.String[])">
+            <summary>Constructor</summary>
+            <param name="handler">handler for file system events.</param>
+            <param name="fileTypeFilter">May include multiple filters seperated with |.</param>
+            <param name="paths">paths to watch.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.#ctor(System.IO.FileSystemEventHandler,System.String,KS.Unity.Editor.ksFileWatcher.Flags,System.String[])">
+            <summary>Constructor</summary>
+            <param name="handler">handler for file system events.</param>
+            <param name="fileTypeFilter">May include multiple filters seperated with |.</param>
+            <param name="flags"></param>
+            <param name="paths">paths to watch.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.Start">
+            <summary>Starts watching directories for file system events.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.Stop">
+            <summary>Stops watching directories for file system events.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.Watch(System.String[],System.IO.FileSystemEventHandler,System.String,KS.Unity.Editor.ksFileWatcher.Flags)">
+            <summary>Begins watching the file system.</summary>
+            <param name="paths">paths to watch.</param>
+            <param name="handler">handler for file system events.</param>
+            <param name="filter"></param>
+            <param name="flags"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.ChangeHandler(System.IO.FileSystemEventHandler)">
+            <summary>
+            Creates a handler for change events. On some systems change and delete events fire when a file was renamed.
+            We try to detect that and supress the change event.
+            </summary>
+            <param name="handler">handler to pass filtered events to.</param>
+            <returns>change handler</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksFileWatcher.CreateDeleteHandler(System.IO.FileSystemEventHandler,System.String,KS.Unity.Editor.ksFileWatcher.Flags)">
+            <summary>
+            Creates a handler for create and delete events. On some systems create and delete events fire instead of
+            rename events. We try to detect this and call the rename handler instead.
+            </summary>
+            <param name="handler">Handler to pass events to</param>
+            <param name="path">Path being watched</param>
+            <param name="flags">Configuration flags</param>
+            <returns>Create/delete event handler delegate.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksIconUtility">
+            <summary>
+            Utility for setting icons for Unity objects. Uses reflection to call a Unity private method because Unity does
+            not expose icons to the API. Icons set with this utility are not saved and will be cleared when Unity is closed
+            or when the script's code changes, so the icons need to be set each time Unity loads.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.Get">
+            <summary>Gets the singleton instance.</summary>
+            <returns></returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksIconUtility.Icon">
+            <summary>Unity icons</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.GREY_LABEL">
+            <summary>Grey label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.BLUE_LABEL">
+            <summary>Blue label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.CYAN_LABEL">
+            <summary>Cyan label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.GREEN_LABEL">
+            <summary>Green label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.YELLOW_LABEL">
+            <summary>Yellow label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.ORANGE_LABEL">
+            <summary>Orange label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.RED_LABEL">
+            <summary>Red label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.PURPLE_LABEL">
+            <summary>Purple label</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.GREY_CIRCLE">
+            <summary>Grey circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.BLUE_CIRCLE">
+            <summary>Blue circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.CYAN_CIRCLE">
+            <summary>Cyan circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.GREEN_CIRCLE">
+            <summary>Green circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.YELLOW_CIRCLE">
+            <summary>Yellow circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.ORANGE_CIRCLE">
+            <summary>Orange circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.RED_CIRCLE">
+            <summary>Red circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.PURPLE_CIRCLE">
+            <summary>Purple circle</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.GREY_DIAMOND">
+            <summary>Grey diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.BLUE_DIAMOND">
+            <summary>Blue diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.CYAN_DIAMOND">
+            <summary>Cyan diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.GREEN_DIAMOND">
+            <summary>Green diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.YELLOW_DIAMOND">
+            <summary>Yellow diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.ORANGE_DIAMOND">
+            <summary>Orange diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.RED_DIAMOND">
+            <summary>Red diamond</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.Icon.PURPLE_DIAMOND">
+            <summary>Purple diamond</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksIconUtility.IconInfo">
+            <summary>Icon info for inherited icons.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.IconInfo.Texture">
+            <summary>Icon texture</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.IconInfo.Overwrite">
+            <summary>If false, will not apply icon to scripts that already have icons.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksIconUtility.IconInfo.Disabled">
+            <summary>If true, disables the icon to prevent it from appearing in the scene view.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.IconInfo.#ctor(UnityEngine.Texture2D,System.Boolean,System.Boolean)">
+            <summary>Constructor</summary>
+            <param name="texture">Icon texture</param>
+            <param name="overwrite">If false, will not apply icon to scripts that already have icons.</param>
+            <param name="disabled">
+            If true, disables the icon to prevent it from appearing in the scene view.
+            </param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.GetBuiltInIcons">
+            <summary>Gets the array of built-in icons.</summary>
+            <returns>icons</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIcon(UnityEngine.Object,KS.Unity.Editor.ksIconUtility.Icon,System.Boolean)">
+            <summary>Sets the icon for an object.</summary>
+            <param name="obj">obj to set icon for.</param>
+            <param name="icon">icon to set.</param>
+            <param name="overwrite">If false, will not set the icon if the object already has an icon.</param>
+            <returns>true if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIcon``1(KS.Unity.Editor.ksIconUtility.Icon,System.Boolean)">
+            <summary>Sets the icon for script type T.</summary>
+            <param name="icon">icon to set.</param>
+            <param name="overwrite">If false, will not set the icon if the object already has an icon.</param>
+            <returns>true if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIcon(System.Type,KS.Unity.Editor.ksIconUtility.Icon,System.Boolean)">
+            <summary>Sets the icon for script type.</summary>
+            <param name="type">type of script to set icon for.</param>
+            <param name="icon">icon to set.</param>
+            <param name="overwrite">If false, will not set the icon if the object already has an icon.</param>
+            <returns>true if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIcon(UnityEngine.Object,UnityEngine.Texture2D,System.Boolean)">
+            <summary>Sets the icon for an object.</summary>
+            <param name="obj">obj to set icon for.</param>
+            <param name="texture">texture for icon to set.</param>
+            <param name="overwrite">If false, will not set the icon if the object already has an icon.</param>
+            <returns>true if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIcon``1(UnityEngine.Texture2D,System.Boolean)">
+            <summary>Sets the icon for script type T.</summary>
+            <param name="texture">texture for icon to set.</param>
+            <param name="overwrite">If false, will not set the icon if the object already has an icon.</param>
+            <returns>true if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIcon(System.Type,UnityEngine.Texture2D,System.Boolean)">
+            <summary>Sets the icon for script type.</summary>
+            <param name="type">type of script to set icon for.</param>
+            <param name="texture">texture for icon to set.</param>
+            <param name="overwrite">If false, will not set the icon if the object already has an icon.</param>
+            <returns>true if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetDisabledIcon``1(UnityEngine.Texture2D,System.Boolean)">
+            <summary>Sets the icon for a monobehaviour and disables it from appearing in the scene view.</summary>
+            <typeparam name="T">Type of monobehaviour to set disabled icon for.</typeparam>
+            <param name="texture">Texture to set for the icon.</param>
+            <param name="overwrite">
+            If false, will not set or disable the icon if the script already has an icon.
+            </param>
+            <returns>True if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetDisabledIcon(System.Type,UnityEngine.Texture2D,System.Boolean)">
+            <summary>
+            Sets the icon for a script type and disables it from appearing in the scene view if it is a type of
+            monobehaviour.
+            </summary>
+            <typeparam name="T">Type of script to set disabled icon for.</typeparam>
+            <param name="texture">Texture to set for the icon.</param>
+            <param name="overwrite">
+            If false, will not set or disable the icon if the script already has an icon.
+            </param>
+            <returns>True if the icon was set successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetInheritedIcon``1(UnityEngine.Texture2D,System.Boolean,System.Boolean)">
+            <summary>
+            Sets the icon for script type <typeparamref name="T"/> and all scripts that inherit from it. The icons will
+            not be applied until you call <see cref="M:KS.Unity.Editor.ksIconUtility.ApplyInheritedIcons(System.String[])"/>. If a script inherits from
+            multiple scripts with inherited icons, it will inherit the icon from the closest base class in the
+            inheritance chain.
+            </summary>
+            <typeparam name="T">Type of script to set inherited icon for.</typeparam>
+            <param name="texture">Texture to set for the icon.</param>
+            <param name="overwrite">If false, will not set the icon for scripts that already have an icon.</param>
+            <param name="disabled">
+            If true and the script is a component type, disables the icon to prevent it from appearing in the scene
+            view.
+            </param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetInheritedIcon(System.Type,UnityEngine.Texture2D,System.Boolean,System.Boolean)">
+            <summary>
+            Sets the icon for script <paramref name="type"/> and all scripts that inherit from it. The icons will not be
+            applied until you call <see cref="M:KS.Unity.Editor.ksIconUtility.ApplyInheritedIcons(System.String[])"/>. If a script inherits from multiple
+            scripts with inherited icons, it will inherit the icon from the closest base class in the inheritance chain.
+            </summary>
+            <param name="type">Type of script to set inherited icon for.</param>
+            <param name="texture">Texture to set for the icon.</param>
+            <param name="overwrite">If false, will not set the icon for scripts that already have an icon.</param>
+            <param name="disabled">
+            If true and the script is a component type, disables the icon to prevent it from appearing in the scene
+            view.
+            </param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.ApplyInheritedIcons(System.String[])">
+            <summary>
+            Applies inherited icons set with <see cref="M:KS.Unity.Editor.ksIconUtility.SetInheritedIcon(System.Type,UnityEngine.Texture2D,System.Boolean,System.Boolean)"/> to scripts.
+            </summary>
+            <param name="referencedAssemblies">
+            Searches these assemblies and assemblies that reference these assemblies for scripts to apply icons to. If
+            null or empty, searches all assemblies.
+            </param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.AssemblyReferences(System.Reflection.Assembly,System.String[])">
+            <summary>
+            Checks if an assembly is or references one of the <paramref name="referencedAssemblies"/>.
+            </summary>
+            <param name="assembly">Assembly to check.</param>
+            <param name="referencedAssemblies">Referenced assembly names</param>
+            <returns>
+            True if the <paramref name="assembly"/> is or references one of the <paramref name="assembly"/>.
+            </returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIconEnabled``1(System.Boolean)">
+            <summary>
+            Sets the enabled state of an icon for a monobehaviour. Disabling an icon prevents it from appearing in the
+            scene view.
+            </summary>
+            <typeparam name="T">Type of monobehaviour to set icon enabled state for.</typeparam>
+            <param name="enabled">Enabled state to set.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.SetIconEnabled(System.Type,System.Boolean)">
+            <summary>
+            Sets the enabled state of an icon for a monobehaviour. Disabling an icon prevents it from appearing in the
+            scene view.
+            </summary>
+            <param name="type">
+            Type of monobehaviour to set icon enabled state for. Does nothing if this is not a type of monobehaviour.
+            </param>
+            <param name="enabled">Enabled state to set.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.FixAnnotations">
+            <summary>
+            Creates missing annotations and sets the icon enabled state for scripts whose annotations were missing
+            when we tried setting the icon enabled state earlier.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.CleanUp">
+            <summary>Destroys the intermediate game object that's needed to set script icons.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.HasAnnotation(System.Type)">
+            <summary>Checks if a type has an annotation. The annotation holds the gizmo/icon enabled state.</summary>
+            <param name="type">Type to check for annotation.</param>
+            <returns>True if the type has an annotation.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.LoadIcons">
+            <summary>Loads default icons that come with Unity</summary>
+            <returns>true if icons loaded successfully.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.LoadIcons(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Loads a set of Unity icons. The icons names to load will be constructed as [baseName][index][postFix].
+            </summary>
+            <param name="baseName">baseName of icons to load.</param>
+            <param name="postFix">postFix for icons to load.</param>
+            <param name="count">number of icons to load. Will load icons for index 0 to count - 1.</param>
+            <param name="offset">index to start icon insertion into m_icons at.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIconUtility.LoadScript(System.Type)">
+            <summary>
+            Loads a MonoScript by adding one to a temporary game object that exists for the lifetime of the icon util.
+            </summary>
+            <param name="type">type of script to load.</param>
+            <returns></returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksIMenu">
+            <summary>Menu interface for creating GUIs for the <see cref="T:KS.Unity.Editor.ksWindow"/> class.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksIMenu.DestroyOnClose">
+            <summary>Should we destroy this menu when it is closed?</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksIMenu.Icon">
+            <summary>The icon for this menu.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIMenu.OnOpen(KS.Unity.Editor.ksWindow)">
+            <summary>Called when the menu is opened.</summary>
+            <param name="window">window that opened the menu.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIMenu.OnClose(KS.Unity.Editor.ksWindow)">
+            <summary>Called when the menu is closed.</summary>
+            <param name="window">window that closed the menu.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksIMenu.Draw(KS.Unity.Editor.ksWindow)">
+            <summary>Draws the GUI.</summary>
+            <param name="window">window to create the GUI for.</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksInspectorStateMap`2">
+            <summary>
+            This can be used by property drawers and custom inspectors to store per-property custom state that persists
+            through Unity serializations. The state is not saved to disk so it only persists as long as Unity is open. A
+            property is indentified by its name and the name of the script is belongs to.
+            
+            This class inherits from <see cref="T:KS.Unity.Editor.ksSingleton`1"/>, so it should be accessed using the singleton accessor
+            <see cref="M:KS.Unity.Editor.ksSingleton`1.Get"/>.
+            </summary>
+            <typeparam name="State">State type to store with the property.</typeparam>
+            <typeparam name="Self">The singleton type. Should be the type that inherits from class.</typeparam>
+        </member>
+        <member name="P:KS.Unity.Editor.ksInspectorStateMap`2.DefaultState">
+            <summary>The default state to return if there is no state in the map.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksInspectorStateMap`2.Get(UnityEditor.SerializedProperty)">
+            <summary>Gets the state associated with a property.</summary>
+            <param name="property">Property to get state for.</param>
+            <returns>
+            The state for the property, or <see cref="P:KS.Unity.Editor.ksInspectorStateMap`2.DefaultState"/> if there was no state for the property.
+            </returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksInspectorStateMap`2.Set(UnityEditor.SerializedProperty,`0)">
+            <summary>Sets the state associated with a property.</summary>
+            <param name="property">Property to set state for.</param>
+            <param name="state">State to set.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksInspectorStateMap`2.GetScriptPropertyName(UnityEditor.SerializedProperty)">
+            <summary>Gets the script name and propety name from a property seperated by a '.'.</summary>
+            <param name="property">Property</param>
+            <returns>[Script Name].[Property Name]</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksPathUtils">
+            <summary>Path utility functions</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksPathUtils.LoggingFlags">
+            <summary>Types of log messages to log.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksPathUtils.LoggingFlags.NONE">
+            <summary>No logging.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksPathUtils.LoggingFlags.EXCEPTIONS">
+            <summary>Log exceptions.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksPathUtils.LoggingFlags.MISSING">
+            <summary>Log missing files.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksPathUtils.LoggingFlags.NOT_EMPTY">
+            <summary>
+            Log failures caused by non-empty targets (didn't delete a directory because it wasn't empty, didn't move
+            a file because the destination would be overwritten, etc).
+            </summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksPathUtils.LoggingFlags.ACTIONS">
+            <summary>Log file system actions.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksPathUtils.LoggingFlags.ALL">
+            <summary>Log all message types.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.#cctor">
+            <summary>Static initialization</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksPathUtils.ProjectRoot">
+            <summary>The root of the Unity project.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.GetDirectory(System.String)">
+            <summary>
+            Gets the directory portion of a path. If the path ends with a trailing '/' or '\', it is removed before
+            getting the directory path, so `a/b/` will return `a` instead of `a/b`. The trailing '/' or '\' is not
+            included in the returned path. Returns empty string if there is no directory portion of the path.
+            </summary>
+            <param name="path">path to get directory for.</param>
+            <returns>directory</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.GetName(System.String,System.Boolean)">
+            <summary>Gets the file name portion of a path.</summary>
+            <param name="path">path to get file name for.</param>
+            <param name="includeExt">if false, will remove the file extension from the name.</param>
+            <returns>file name.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.Clean(System.String)">
+            <summary>Standardizes path seperators and removes trailing slashes from a path.</summary>
+            <param name="path">path to clean.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.IsEmptyDirectory(System.String)">
+            <summary>Checks if a path is an empty directory.</summary>
+            <param name="path">path to check.</param>
+            <returns>true if the path is an empty directory.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.ToAbsolutePath(System.String)">
+            <summary>
+            Converts a path relative to the project to an absolute path. If the path is already an absolute path,
+            returns the path unmodified.
+            </summary>
+            <param name="path">path to convert to absolute path.</param>
+            <returns>absolute path.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.ToAssetPath(System.String)">
+            <summary>Converts a full path to a Unity asset path.</summary>
+            <param name="path">path to convert.</param>
+            <returns>Unity asset path.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.MakeRelative(System.String,System.String)">
+            <summary>Converts a path to be relative to another path.</summary>
+            <param name="path">path to make relative.</param>
+            <param name="relativeTo">path it should be relative to.</param>
+            <returns>relative path.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.Move(System.String,System.String,System.Boolean,KS.Unity.Editor.ksPathUtils.LoggingFlags,System.Boolean)">
+            <summary>
+            Moves a file or directory, optionally overwriting the existing file or directory. If the source and dest are
+            both directories, merges the source directory into the dest directory. Also moves associated .meta files, if
+            they exist.
+            </summary>
+            <param name="source">source file or directory to move.</param>
+            <param name="dest">dest to move file or directory to.</param>
+            <param name="overwrite">if a dest file already exists, should we overwrite it?</param>
+            <param name="logging">controls which types of messages to log.</param>
+            <param name="moveMetaFile">if true, will move the associated meta file if it exists.</param>
+            <returns>
+            true if the file or directory was moved. When merging directories, if any files are not moved,
+            returns false.
+            </returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:KS.Unity.Editor.ksPathUtils.CopyFiles(System.String,System.String,System.String[],System.String[],KS.Unity.Editor.ksPathUtils.LoggingFlags)" -->
+        <member name="M:KS.Unity.Editor.ksPathUtils.Delete(System.String,System.Boolean,KS.Unity.Editor.ksPathUtils.LoggingFlags,System.Boolean)">
+            <summary>Deletes a file or directory, and the associated .meta file, if it exists.</summary>
+            <param name="path">path to delete.</param>
+            <param name="deleteNonEmptyDirectory">If the path is to a non-empty directory, should we delete it?</param>
+            <param name="logging">controls which types of messages to log.</param>
+            <param name="deleteMetaFile">if true, will delete the associated meta file if it exists.</param>
+            <returns>true if the path did not exist or was deleted.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.Create(System.String,System.Boolean,KS.Unity.Editor.ksPathUtils.LoggingFlags)">
+            <summary>Creates a folder path if it does not already exist.</summary>
+            <param name="path">Path to create.</param>
+            <param name="isFolder">
+            true if the path is to a folder. If false, the last part of the path will not be
+            created.
+            </param>
+            <param name="logging">controls which types of messages to log.</param>
+            <returns>false if the folder does not exist and could not be created.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksPathUtils.Unzip(System.String,System.String)">
+            <summary>
+            Unzip a file to a destination directory.
+            </summary>
+            <param name="zipFile">Path to a zip file.</param>
+            <param name="destDir">Destination directory</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksProcessUtils">
+            <summary>
+            Provides a utility function for starting a minimized process window that does not steal focus on Windows using
+            p-invoke. On other platforms, starts the process normally.
+            <see href="https://docs.microsoft.com/en-us/windows/win32/procthread/creating-processes"/>
+            </summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksProcessUtils.STARTUPINFO">
+            <summary>Contains startup information.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksProcessUtils.PROCESS_INFORMATION">
+            <summary>Contains process information.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksProcessUtils.CreateProcess(System.String,System.String,System.IntPtr,System.IntPtr,System.Boolean,System.UInt32,System.IntPtr,System.String,KS.Unity.Editor.ksProcessUtils.STARTUPINFO@,KS.Unity.Editor.ksProcessUtils.PROCESS_INFORMATION@)">
+            <summary>External call to create a process.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksProcessUtils.CloseHandle(System.IntPtr)">
+            <summary>External call to close a process handle.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksProcessUtils.StartProcess(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Starts a process as a minimized window that does not steal focus if on Windows. Starts the process normally
+            on other platforms, or if <paramref name="useStdOutAndErr"/> is true.
+            </summary>
+            <param name="filePath">Path of the file to execute.</param>
+            <param name="arguments">Arguments to pass to the new process.</param>
+            <param name="workingDirectory">Path of the working directory for the new process.</param>
+            <param name="useStdOutAndErr">
+            True to capture the standard output and error streams. This requires us to use the fallback method of
+            starting a process that opens a window and steals focus on Windows.
+            </param>
+            <returns>Process that was started.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksProcessUtils.StartProcessFallback(System.String,System.String,System.String,System.Boolean)">
+            <summary>Starts a process.</summary>
+            <param name="filePath">Path of the file to execute.</param>
+            <param name="arguments">Arguments to pass to the new process.</param>
+            <param name="workingDirectory">Path of the working directory for the new process.</param>
+            <param name="useStdOutAndErr">True to capture the standard output and error streams.</param>
+            <returns>Process that was started.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksProjectInfo">
+            <summary>Contains information about a project.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksProjectInfo.Id">
+            <summary>Project ID</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksProjectInfo.Name">
+            <summary>Project name</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksProjectInfo.CompanyId">
+            <summary>Company ID</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksProjectInfo.CompanyName">
+            <summary>Company name</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksProjectInfo.Service">
+            <summary>Service the project is for.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksReflectionObject">
+            <summary>
+            Convencience class for accessing reflection data for an object, property, field, or type. When a reflection error
+            occurs, an error is logged and a void reflection object is returned. All calls on void reflection objects
+            return void reflection objects.
+            </summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksReflectionObject.Void">
+            <summary>
+            Void reflection object. This is returned when a reflection error occurs. All calls on void reflection
+            objects return void reflection objects.
+            </summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksReflectionObject.IsVoid">
+            <summary>
+            Is this a void reflection object? Void reflection objects are returned when a reflection error occurs. All
+            calls on void reflection objects return void reflection objects.
+            </summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksReflectionObject.Type">
+            <summary>Represented type.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksReflectionObject.Container">
+            <summary>Container object.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksReflectionObject.PropertyInfo">
+            <summary>Represented property.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksReflectionObject.FieldInfo">
+            <summary>Represented field.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor">
+            <summary>Private constructor</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Type)">
+            <summary>Type constructor</summary>
+            <param name="type"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.String,System.String,System.Boolean)">
+            <summary>Constructor to load assembly and type by name.</summary>
+            <param name="assemblyName"></param>
+            <param name="typeName"></param>
+            <param name="silent">If true, no errors will be logged.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Reflection.Assembly,System.String)">
+            <summary>Constructor with assembly and name. Get the Type with name in the assembly.</summary>
+            <param name="assembly"></param>
+            <param name="typeName"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Object)">
+            <summary>Object constructor</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Object,System.Reflection.PropertyInfo)">
+            <summary>PropertyInfo constructor.</summary>
+            <param name="container">container for the property.</param>
+            <param name="propertyInfo"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Object,System.Reflection.FieldInfo)">
+            <summary>FieldInfo constructor</summary>
+            <param name="container">container for the field.</param>
+            <param name="fieldInfo"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Object,System.Reflection.MethodInfo)">
+            <summary>MethodInfo constructor</summary>
+            <param name="container">container for the method.</param>
+            <param name="methodInfo"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.#ctor(System.Reflection.ConstructorInfo)">
+            <summary>ConstructorInfo constructor</summary>
+            <param name="constructorInfo"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetValue(System.Object)">
+            <summary>Get value of the object, property, or field,</summary>
+            <param name="instance">instance to get value from. Use container object if not provided.</param>
+            <returns>Value of the object, property, or field.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.SetValue(System.Object)">
+            <summary>
+            Sets the value of the object, property, or field. Does nothing if this is a void reflection object.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.SetValue(System.Object,System.Object)">
+            <summary>
+            Sets the value of the property or field. Does nothing if this is a void reflection object.
+            </summary>
+            <param name="instance">instance to set value on.</param>
+            <param name="value"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetProperty(System.String,System.Boolean)">
+            <summary>Gets a property from this object/type.</summary>
+            <param name="name">name of property.</param>
+            <param name="silent">if true, no errors will be logged.</param>
+            <returns>Reflection object for the property, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the property wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetField(System.String,System.Boolean)">
+            <summary>Gets a field from this object/type.</summary>
+            <param name="name">name of field.</param>
+            <param name="silent">if true, no errors will be logged.</param>
+            <returns>Reflection object for the field, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the field wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetIndexedElement(System.Int32)">
+            <summary>Gets an element from this object. This object must implement IList or IEnumerable.</summary>
+            <param name="index">index of element to get.</param>
+            <returns>the element at the index, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the element wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetMethod(System.String,System.Boolean)">
+            <summary>Gets a method from this object/type.</summary>
+            <param name="name">name of method.</param>
+            <param name="silent">if true, no errors will be logged.</param>
+            <returns>Reflection object for the method, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the method wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetMethod(System.String,System.Reflection.BindingFlags,System.Type[],System.Boolean)">
+            <summary>Gets a method from this object/type.</summary>
+            <param name="name">name of method.</param>
+            <param name="bindingFlags"></param>
+            <param name="paramTypes">types of method' parameters.</param>
+            <param name="silent">if true, no errors will be logged.</param>
+            <returns>Reflection object for the method, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the method wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetConstructor(System.Type[])">
+            <summary>Gets a constructor from this type.</summary>
+            <param name="paramTypes">Types of constructor's parameters.</param>
+            <returns>Reflection object for the constructor, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if no constructor was found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetConstructor(System.Reflection.BindingFlags,System.Boolean,System.Type[])">
+            <summary>Gets a constructor from this type.</summary>
+            <param name="bindingFlags"></param>
+            <param name="silent">if true, no errors will be logged.</param>
+            <param name="paramTypes">Types of constructor's parameters.</param>
+            <returns>Reflection object for the constructor, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if no constructor was found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.GetNestedType(System.String,System.Reflection.BindingFlags)">
+            <summary>Gets a nested type from this type.</summary>
+            <param name="name">name of nested type.</param>
+            <param name="bindingFlags"></param>
+            <returns>Reflection object for the nested type, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the type wasn't found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.Invoke(System.Object[])">
+            <summary>
+            Invokes the method/constructor represented by this reflection object, if there is one.
+            Does nothing otherwise.
+            </summary>
+            <param name="args">args to invoke method with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.InstanceInvoke(System.Object,System.Object[])">
+            <summary>
+            Invokes the method/constructor represented by this reflection object, if there is one.
+            Does nothing otherwise.
+            </summary>
+            <param name="instance">instance to call invoke method on</param>
+            <param name="args">args to invoke method/constructor with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.InvokeThrowErrors(System.Object[])">
+            <summary>
+            Invokes the method/constructor represented by this reflection object, if there is one.
+            Does nothing otherwise. Does not catch errors thrown by the invoked method.
+            </summary>
+            <param name="args">args to invoke method with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.InstanceInvokeThrowErrors(System.Object,System.Object[])">
+            <summary>
+            Invokes the method/constructor represented by this reflection object, if there is one.
+            Does nothing otherwise. Does not catch errors thrown by the invoked method.
+            </summary>
+            <param name="instance">instance to call invoke method on</param>
+            <param name="args">args to invoke method/constructor with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.Call(System.String,System.Object[])">
+            <summary>Calls a function on this object/type.</summary>
+            <param name="name">name of function.</param>
+            <param name="args">args to call function with.</param>
+            <returns>
+            Reflection object for the return value, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the function isn't found or returns null
+            or void.
+            </returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.Construct(System.Object[])">
+            <summary>
+            Calls a constructor for this type. Will try to determine which constructor to call from the argument types.
+            Logs an error if which constructor to call cannot be determined.
+            </summary>
+            <param name="args">args to pass to constructor.</param>
+            <returns>
+            Reflection object for constructed object, or <see cref="P:KS.Unity.Editor.ksReflectionObject.Void"/> if the constructor could not be called.
+            </returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksReflectionObject.IsNullable(System.Type)">
+            <summary>Checks if a type is nullable.</summary>
+            <param name="type"></param>
+            <returns>True if the type is nullable.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksScrollArea">
+            <summary>
+            A scroll area that can detect if the vertical and horizontal scroll bars are showing. For it to work properly,
+            the last rect drawn in the scroll area must be the lowest and right-most rect in the scroll area.
+            </summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksScrollArea.SCROLL_BAR_WIDTH">
+            <summary>Width of a scroll bar.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksScrollArea.ScrollPosition">
+            <summary>Scroll position</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksScrollArea.IsVerticalBarVisible">
+            <summary>
+            Is the vertical scroll bar visible? This is updated on a repaint event when <see cref="M:KS.Unity.Editor.ksScrollArea.End"/> is called.
+            </summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksScrollArea.IsHorizontalBarVisible">
+            <summary>
+            Is the horizontal scroll bar visible? This is updated on a repaint event when <see cref="M:KS.Unity.Editor.ksScrollArea.End"/> is called.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksScrollArea.#ctor(UnityEditor.EditorWindow)">
+            <summary>Constructor</summary>
+            <param name="window">Window the scroll area will be drawn in.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksScrollArea.Begin">
+            <summary>Begins the scroll area.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksScrollArea.End">
+            <summary>
+            Ends the scroll area. If the current event is a repaint event, updates <see cref="P:KS.Unity.Editor.ksScrollArea.IsVerticalBarVisible"/>
+            and <see cref="P:KS.Unity.Editor.ksScrollArea.IsHorizontalBarVisible"/>, and repaints the window if either changed.
+            </summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksSingleton`1">
+            <summary>
+            Base class for scriptable object singletons that survive Unity serialization. These do not persist
+            when Unity closes. It's not safe to access these until Unity deserialization is finished.
+            <typeparamref name="T"/> should be the class that inherits this.
+            </summary>
+            <typeparam name="T">The most derived type</typeparam>
+        </member>
+        <member name="M:KS.Unity.Editor.ksSingleton`1.Get">
+            <summary></summary>
+            <returns>Singleton instance.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksSingleton`1.OnEnable">
+            <summary>
+            Unity OnEnable called after deserialization. Sets this to the singleton instance. Destroys this
+            if the singleton instance is already set.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksSingleton`1.Initialize">
+            <summary>Can be overriden to perform initialization.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksSingleton`1.Create">
+            <summary>
+            Creates a non-singleton instance of <typeparamref name="T"/> that will not survive unity serialization. Can
+            be used for testing.
+            </summary>
+            <returns>non-singleton instance.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksStyle">
+            <summary>Common styles used in our Unity GUIs.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksStyle.LinkInfo">
+            <summary>Class that holds link info.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.LinkColor">
+            <summary>Color to use for links.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.WarningColour">
+            <summary>Colour to use for warning text.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.PrefabColour">
+            <summary>Colour of prefab game object names in the hierarchy window.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.MissingPrefabColour">
+            <summary>Colour of missing prefab game object names in the hierarchy window.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.HighlightColour">
+            <summary>Row highlight colour.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.SelectionHighlightColour">
+            <summary>Selected row highlight colour.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.EditorBackgroundColor">
+            <summary>The background color of an editor window.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksStyle.LineColor">
+            <summary>
+            The color of lines drawn with <see cref="M:KS.Unity.Editor.ksStyle.Line"/>. Matches the default text color. This color value makes
+            the line appear to match the text color better than using the actual text color from 
+            GUI.skin.label.normal.textColor.
+            </summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.TrimToFit(System.String,UnityEngine.GUIStyle,System.Single)">
+            <summary>
+            If the <paramref name="text"/> does not fit within <paramref name="maxWidth"/>, trims characters off the
+            end and appends "..." until it fits.
+            </summary>
+            <param name="text">Text to trim to fit within <paramref name="maxWidth"/>.</param>
+            <param name="style">Style the text will be rendered with.</param>
+            <param name="maxWidth">Maximum width of the text.</param>
+            <returns>Trimmed text</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.ProjectSelector``1(System.String,``0,System.Collections.Generic.List{``0},System.Action,System.Action{``0})">
+            <summary>Creates email/logout and project selector buttons.</summary>
+            <typeparam name="T">Project type</typeparam>
+            <param name="email">The user's email account</param>
+            <param name="project">Selected project</param>
+            <param name="projects">List of projects</param>
+            <param name="logoutCallback">Callback to call when the user logsout.</param>
+            <param name="selectProjectCallback">Callback to call when the user selects a project.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.GetInspectorLabelWidth(System.Single)">
+            <summary>
+            Gets the width field labels would have in the inspector if it were the given width. The current view width
+            is used if no width is provided. The width of field labels depends on the size of inspector window, but is
+            always a fixed size in other windows. Set EditorGUIUtility.labelWidth to the returned value to make the
+            label width scale with the window width like it does in the inpsector.
+            </summary> 
+            <param name="width">width of window. If zero or less, the current view width is used.</param>
+            <returns>Width of labels in the inspector window if it were the given width.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.WordWrapLabel(System.String)">
+            <summary>Creates a word-wrapped label.</summary>
+            <param name="text">Text for the label.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Button(System.String,UnityEngine.Texture2D,System.String)">
+            <summary>Creates a button with our styling applied.</summary>
+            <param name="name">Name of the button.</param>
+            <param name="icon">Icon for the button.</param>
+            <param name="tooltip">Tooltip for the button.</param>
+            <returns>true if the button was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Button(UnityEngine.Rect,System.String,UnityEditor.MouseCursor)">
+            <summary>Creates a button with specific position and mouse cursor.</summary>
+            <param name="rect">position to place the button.</param>
+            <param name="name">name of the button.</param>
+            <param name="mouseCursor">Use arrow mourse cursor by default. </param>
+            <returns>true if the button was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Link(System.String,System.String)">
+            <summary>Creates a link.</summary>
+            <param name="text">text showing for the link.</param>
+            <param name="url">url of the link.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Link(UnityEngine.Vector2,System.String,System.String)">
+            <summary>Creates a link.</summary>
+            <param name="position">position to place the link.</param>
+            <param name="text">text showing for the link.</param>
+            <param name="url">url of the link.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Link(UnityEngine.Rect,System.String,System.String)">
+            <summary>Creates a link.</summary>
+            <param name="rect">Rect to draw the link in.</param>
+            <param name="text">Link text.</param>
+            <param name="url">Url to link to.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.OptionsButton">
+            <summary>Draws an options button with 3 vertical dots.</summary>
+            <returns>True if the button was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.OptionsButton(UnityEngine.Vector2)">
+            <summary>Draws an options button with 3 vertical dots.</summary>
+            <param name="position">Position of the top left corner of the button.</param>
+            <returns>True if the button was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.OptionsButton(UnityEngine.Rect)">
+            <summary>Draws an options button with 3 vertical dots.</summary>
+            <param name="rect">Rectangle to draw button in.</param>
+            <returns>True if the button was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.HelpBox(UnityEditor.MessageType,System.String[])">
+            <summary>Creates a help box with link text.</summary>
+            <param name="type">info, warning or error?</param>
+            <param name="linkStrings">
+            {text, url, text, url...} If url is null, the preceding text will not be a link. If it is empty string,
+            clicking the link will not open a url.
+            </param>
+            <returns>The index of the clicked link. -1 if no index was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.GetHelpBoxIcon(UnityEditor.MessageType)">
+            <summary>Gets the help box icon for the given message type.</summary>
+            <param name="type">info, warning or error?</param>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.TextField(UnityEngine.Rect,System.String,System.String)">
+            <summary>Creates a text field with specific position and place holder string.</summary>
+            <param name="rect">position to place the text field.</param>
+            <param name="text">text showing in the text field.</param>
+            <param name="placeholder">empty string by default.</param>
+            <returns>text in this text field</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.PasswordField(UnityEngine.Rect,System.String,System.String)">
+            <summary>Creates a password field with specific position and place holder string.</summary>
+            <param name="rect">position to place the password field.</param>
+            <param name="text">text showing in the password field.</param>
+            <param name="placeholder">empty string by default.</param>
+            <returns>password in this password field</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Toggle(UnityEngine.Rect,System.String,System.Boolean,System.Single)">
+            <summary>Creates a toggle with specific position and checkbox Width.</summary>
+            <param name="rect">position to place the toggle.</param>
+            <param name="text">text showing on the label.</param>
+            <param name="isChecked">Is the toggle checked?</param>
+            <param name="checkboxWidth"></param>
+            <returns>if checkbox is checked</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.BrowseButton">
+            <summary>Creates a browse button with our styling applied.</summary>
+            <returns>true if the button was clicked.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Line">
+            <summary>Creates a horizontal line.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.TitleFoldout(System.Boolean,System.String)">
+            <summary>Creates a bolded title foldout with our styling applied.</summary>
+            <param name="expanded">Is the foldout expanded?</param>
+            <param name="text">Foldout text</param>
+            <returns>True if the foldout is expanded.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.Foldout(System.Boolean,System.String)">
+            <summary>
+            Draws a foldout that works correctly with horizontal scroll bars. Unity's foldouts do not affect the width
+            of horizontal scroll bars and long foldouts will disappear when scrolling enough to the right.
+            </summary>
+            <param name="expanded">Is the foldout expanded?</param>
+            <param name="text">Foldout text</param>
+            <returns>True if the foldout is expanded.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.CreateTempContents(System.String[])">
+            <summary>Creates temp gui contents array from given strings</summary>
+            <param name="texts"></param>
+            <returns></returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.NumericOverrideField(UnityEditor.SerializedProperty,System.Object,System.String,System.String)">
+            <summary>
+            Creates an int or float field with a checkbox. When the value is less than zero, the checkbox is unchecked
+            and the numeric field box is hidden. Checking the checkbox will show the numeric field box and set the
+            value to <paramref name="defaultValue"/>.
+            </summary>
+            <param name="property">The numeric property to create the field for.</param>
+            <param name="defaultValue">The default value to set when the checkbox is checked.</param>
+            <param name="tooltip">Optional tooltip</param>
+            <param name="displayName">Optional display name</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksStyle.HasMixedNumericOverrides(UnityEditor.SerializedProperty)">
+            <summary>
+            Checks if a numeric property (float or int) has mixed values where some are negative and some are non-
+            negative. This is used with <see cref="M:KS.Unity.Editor.ksStyle.NumericOverrideField(UnityEditor.SerializedProperty,System.Object,System.String,System.String)"/>
+            where negative values mean to use the default property value.
+            </summary>
+            <param name="property">Numeric property to check</param>
+            <returns>True if the property has mixed values where some are negative and some are non-negative.</returns>
+        </member>
+        <member name="T:KS.Unity.Editor.ksWindow">
+            <summary>
+            Editor window the uses an interface to create the GUI. Swapping the interface allows
+            for switching GUIs without having to create a new window for the new GUI.
+            </summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksWindow.CreateCallback">
+            <summary>Callback to call when a window is created.</summary>
+            <param name="window">window that was created.</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksWindow.WindowStyle">
+            <summary>Window display styles</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksWindow.WindowStyle.DEFAULT">
+            <summary>Shows the window using <see cref="M:UnityEditor.EditorWindow.Show"/></summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksWindow.WindowStyle.UTILITY">
+            <summary>Shows the window using <see cref="M:UnityEditor.EditorWindow.ShowUtility"/></summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.#cctor">
+            <summary>Static initialization</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.SetMenuType(System.UInt32,System.Type)">
+            <summary>Set menu type.</summary>
+            <param name="windowId">id of the window to set menu type for.</param>
+            <param name="menuType"></param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.Find(System.UInt32)">
+            <summary>Gets a window by id. This is only safe to call after Unity deserialization finishes.</summary>
+            <param name="id">id of window to get. Must be non-zero.</param>
+            <returns>window with the given id, or null if no window with the given id was found.</returns>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.Open(System.UInt32,KS.Unity.Editor.ksWindow.CreateCallback,KS.Unity.Editor.ksWindow.WindowStyle,System.Boolean)">
+            <summary>
+            Gets and opens a window by id. Creates the window if no window with the given id exists.
+            This is only safe to call after Unity deserialization finishes.
+            </summary>
+            <param name="id">id of window to open. Must be non-zero.</param>
+            <param name="onCreate">callback to call if we create the window.</param>
+            <param name="style"></param>
+            <param name="focus">if true, the window will be focused.</param>
+            <returns>window with the given id, or null if id was 0.</returns>
+        </member>
+        <member name="P:KS.Unity.Editor.ksWindow.Id">
+            <summary>Window id</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksWindow.Menu">
+            <summary>Menu that provides the GUI.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.OnEnable">
+            <summary>Unity on enable.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.OnDestroy">
+            <summary>Unity on destroy.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.OnGUI">
+            <summary>Unity on GUI.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksWindow.OnFocus">
+            <summary>Unity on focus.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.PathFinderDrawer">
+            Property drawer for file and directory path finders
+        </member>
+        <member name="P:KS.Unity.Editor.PathFinderDrawer.ProjectRoot">
+            Project root path
+        </member>
+        <member name="M:KS.Unity.Editor.PathFinderDrawer.OpenFileBrowser">
+            Opens a file brower to set the path.
+        </member>
+        <member name="M:KS.Unity.Editor.PathFinderDrawer.OnGUI(UnityEngine.Rect,UnityEditor.SerializedProperty,UnityEngine.GUIContent)">
+            Draw a file select field and button to open up a directory browser
+            
+            @param   Rect position
+            @param   SerializedProperty property
+            @param   GUIContent label
+        </member>
+    </members>
+</doc>
