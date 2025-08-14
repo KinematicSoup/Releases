@@ -2237,7 +2237,11 @@ namespace KS.Reactor.Client.Unity.Editor
             // Keys are script asset names.
             List<KeyValuePair<string, UnityEngine.Object>> scriptAssets = 
                 new List<KeyValuePair<string, UnityEngine.Object>>();
+#if UNITY_6000_0_OR_NEWER
+            string[] guids = AssetDatabase.FindAssets("t:PhysicsMaterial t:ksProxyScriptAsset");
+#else
             string[] guids = AssetDatabase.FindAssets("t:PhysicMaterial t:ksProxyScriptAsset");
+#endif
             foreach (string guid in guids)
             {
                 if (m_cancelled)
