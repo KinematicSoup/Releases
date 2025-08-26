@@ -19,6 +19,7 @@
 - Added a ksDestroyReason enum that gives the reason an entity was destroyed.
 - Added a ksEventMap.HasHandlers method that can be used to check if property handlers are registered.
 - New ksMultiType.Types were added: Short, UShort, ULong, Double, Char, Vector2, Vector3, Color, Quaternion.
+- Added a new [client authoritative tutorial](https://docs.kinematicsoup.com/Reactor/Tutorials/Tutorial10-ClientOwnership).
 
 ### Fixed
 - Fixed server errors caused by client toggling idle mode.

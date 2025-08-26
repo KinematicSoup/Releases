@@ -162,6 +162,14 @@ namespace KS.Reactor.Client.Unity
             get { return Version + "-" + ClientVersion; }
         }
 
+        /// <summary>
+        /// Automatically enable Unity to run in the background when you connect to a room. If this is false, you will
+        /// not be allowed to connect if run in background is false.
+        /// </summary>
+        [Tooltip("Automatically enable Unity to run in the background when you connect to a room. If this is " +
+            "unchecked, you will not be allowed to connect if run in background is false.")]
+        public bool AutoRunInBackground = true;
+
         /// <summary>Web API URLs.</summary>
         public URLConfigs Urls = new URLConfigs();
 

@@ -67,6 +67,9 @@ namespace KS.Reactor.Client.Unity.Editor
             EditorGUILayout.LabelField("<b>Reactor Version: </b> " + 
                 (target as ksReactorConfig).Version + "-" + (target as ksReactorConfig).ClientVersion, m_rtfLabelStyle);
 #endif
+            SerializedProperty runInBackgroundProp = serializedObject.FindProperty(
+                nameof(ksReactorConfig.AutoRunInBackground));
+            EditorGUILayout.PropertyField(runInBackgroundProp);
             EditorGUILayout.Space();
 
             DrawGroup("Urls", "URLs");
