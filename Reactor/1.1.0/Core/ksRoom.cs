@@ -182,6 +182,13 @@ namespace KS.Reactor.Client.Unity
         /// </summary>
         protected override bool ConnectionStarted()
         {
+            if (!ksReactorConfig.Instance.AutoRunInBackground && !Application.runInBackground)
+            {
+                ksLog.Error(this, "Cannot connect when Application.runInBackground is false. Enable " +
+                    "Auto Run In Background in the Reactor Settings to automatically set runInBackground to true " +
+                    "when connecting.");
+                return false;
+            }
             return InitializeGameObject();
         }
 
@@ -190,7 +197,15 @@ namespace KS.Reactor.Client.Unity
         /// </summary>
         protected override void Connected()
         {
-            ksReactor.InvokeRoomConnect(this);
+            ksReactor.HandleRoomConnect(this);
+        }
+
+        /// <summary>
+        /// Called when the room disconnects. Invokes the <see cref="ksReactor.OnRoomDisconnect"/> event.
+        /// </summary>
+        protected override void Disconnected()
+        {
+            ksReactor.HandleRoomDisconnect(this);
         }
 
         /// <summary>

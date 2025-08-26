@@ -2216,6 +2216,9 @@
         <member name="M:KS.Reactor.Client.ksBaseRoom`2.Connected">
             <summary>Called when a connection completes successfully.</summary>
         </member>
+        <member name="M:KS.Reactor.Client.ksBaseRoom`2.Disconnected">
+            <summary>Called when the room disconnects.</summary>
+        </member>
         <member name="M:KS.Reactor.Client.ksBaseRoom`2.Initialized">
             <summary>Called when after room scripts and entities are initialized after the first sync.</summary>
         </member>

@@ -43,6 +43,13 @@ namespace KS.Reactor.Client.Unity
         /// <summary>Invoked when a successful room connection is complete.</summary>
         public static event RoomConnectHandler OnRoomConnect;
 
+        /// <summary>Room disconnect handler</summary>
+        /// <param name="room">Room that was disconnected from.</param>
+        public delegate void RoomDisconnectHandler(ksRoom room);
+
+        /// <summary>Invoked when a room disconnects.</summary>
+        public static event RoomDisconnectHandler OnRoomDisconnect;
+
         /// <summary>Room initialized handler</summary>
         /// <param name="room">Room the was synced.</param>
         public delegate void RoomInitializedHandler(ksRoom room);
@@ -60,6 +67,7 @@ namespace KS.Reactor.Client.Unity
         private static GameObject m_hookObject;
         private static Dictionary<int, ksEntityLinker> m_entityLinkers = new Dictionary<int, ksEntityLinker>();
         private static bool m_isQuitting = false;
+        private static int m_connectedRoomCount = 0;
 
         /// <summary>Get the Reactor service.</summary>
         public static ksService Service
@@ -281,10 +289,23 @@ namespace KS.Reactor.Client.Unity
             }
         }
 
-        /// <summary>Invokes the <see cref="OnRoomConnect"/> event.</summary>
+        /// <summary>Increments the connected room count. If this is the first room connection, sets 
+        /// <see cref="Application.runInBackground"/> to true. Invokes the <see cref="OnRoomConnect"/> event.
+        /// </summary>
         /// <param name="room">Room the was connected to.</param>
-        internal static void InvokeRoomConnect(ksRoom room)
+        internal static void HandleRoomConnect(ksRoom room)
         {
+            if (m_connectedRoomCount == 0)
+            {
+                if (!Application.runInBackground)
+                {
+                    Application.runInBackground = true;
+                    ksLog.Info(LOG_CHANNEL,"Setting Application.runInBackground to true. " +
+                        "You may set it back to false after disconnecting.");
+                }
+            }
+            m_connectedRoomCount++;
+
             if (OnRoomConnect != null)
             {
                 try
@@ -294,6 +315,25 @@ namespace KS.Reactor.Client.Unity
                 catch (Exception ex)
                 {
                     ksExceptionHandler.Handle("Exception caught while calling room connect handlers.", ex);
+                }
+            }
+        }
+
+        /// <summary>Decrements the connected room count. Invokes the <see cref="OnRoomDisconnect"/> event.</summary>
+        /// <param name="room">Room the was connected to.</param>
+        internal static void HandleRoomDisconnect(ksRoom room)
+        {
+            m_connectedRoomCount--;
+
+            if (OnRoomDisconnect != null)
+            {
+                try
+                {
+                    OnRoomDisconnect(room);
+                }
+                catch (Exception ex)
+                {
+                    ksExceptionHandler.Handle("Exception caught while calling room disconnect handlers.", ex);
                 }
             }
         }
@@ -379,7 +419,7 @@ namespace KS.Reactor.Client.Unity
             hook.OnUpdate = Update;
             hook.OnQuit = OnQuit;
             ksLateUpdateHook lateHook = m_hookObject.AddComponent<ksLateUpdateHook>();
-            lateHook.OnLateUpdate = m_service.PostUpdate;
+            lateHook.OnLateUpdate = PostUpdate;
         }
 
         /// <summary>Update the input manager and all connected rooms.</summary>
@@ -388,6 +428,22 @@ namespace KS.Reactor.Client.Unity
         {
             // Because we are not using a fixed timestep, pass the same time delta for simulation time and real time.
             m_service.Update(realDeltaTime, realDeltaTime);
+        }
+
+        /// <summary>
+        /// Sets <see cref="Application.runInBackground"/> to true if it is false and there are connected rooms, then
+        /// calls <see cref="ksService.PostUpdate"/>.
+        /// </summary>
+        private static void PostUpdate()
+        {
+            if (m_connectedRoomCount > 0 && !Application.runInBackground)
+            {
+                Application.runInBackground = true;
+                ksLog.Warning(LOG_CHANNEL, 
+                    "Application.runInBackground cannot be set to false while rooms are connected. " +
+                    "Setting back to true. You may set it to false after disconnecting.");
+            }
+            m_service.PostUpdate();
         }
 
         /// <summary>Disconnects all rooms immediately when the Unity application quits.</summary>
