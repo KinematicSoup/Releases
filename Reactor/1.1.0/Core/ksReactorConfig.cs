@@ -154,7 +154,7 @@ namespace KS.Reactor.Client.Unity
         [NonSerialized]
 #endif
         /// <summary>Reactor client release number for the current version.</summary>
-        public string ClientVersion = "0";
+        public string ClientVersion = "1";
 
         /// <summary>Reactor version including release number.</summary>
         public string FullVersion

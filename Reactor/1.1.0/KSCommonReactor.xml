@@ -1736,8 +1736,9 @@
             completed so that all changes are applied when the events fire.
             </summary>
         </member>
-        <member name="P:KS.Reactor.Client.ksBaseRoom.RoomUpdates">
-            <summary>Server frames</summary>
+        <member name="M:KS.Reactor.Client.ksBaseRoom.QueueUpdate(KS.Reactor.Secret.RoomUpdate)">
+            <summary>Queues a room update.</summary>
+            <param name="update">Update to queue.</param>
         </member>
         <member name="F:KS.Reactor.Client.ksBaseRoom.m_connectionFactories">
             <summary>Connection factories</summary>
@@ -2351,6 +2352,10 @@
             update.
             </summary>
         </member>
+        <member name="M:KS.Reactor.Client.ksBaseRoom`2.QueueUpdate(KS.Reactor.Secret.RoomUpdate)">
+            <summary>Queues a room update.</summary>
+            <param name="update">Update to queue.</param>
+        </member>
         <member name="M:KS.Reactor.Client.ksBaseRoom`2.ProcessServerFrame">
             <summary>Processes an update from the server.</summary>
         </member>
@@ -2365,10 +2370,10 @@
         <member name="M:KS.Reactor.Client.ksBaseRoom`2.CallSpawnRPC(KS.Reactor.ksSpawnParams,KS.Reactor.ksMultiType[])">
             <summary>
             Spawns an entity on the client and sends a request to the server to spawn the entity. The entity will have
-            id zero and use a temporary spawn id until the server validates the spawn. If the server denies the spawn,
-            the entity will be destroyed.
+            a temporary spawn id until the server validates the spawn. If the server denies the spawn, the entity will
+            be destroyed.
             </summary>
-            <param name="spawnParams">Spawn parameters</param>
+            <param name="spawnParams">Spawn parameters. Must have a non-zero asset id.</param>
             <param name="args">
             Additional arguments to send to the server. These will be available in the server player spawn entity event.
             </param>
@@ -4716,8 +4721,9 @@
             called.
             </summary>
         </member>
-        <member name="M:KS.Reactor.Client.ksTimeKeeper.UpdateExceedCount">
+        <member name="M:KS.Reactor.Client.ksTimeKeeper.UpdateExceedCount(System.Single)">
             <summary>Updates exceed count (number of consecuitive drifts exceeded the threshold).</summary>
+            <param name="drift">How far ahead of behind the target latency we've drifted in seconds.</param>
         </member>
         <member name="M:KS.Reactor.Client.ksTimeKeeper.Advance(System.Single)">
             <summary>Advances the current frame and interpolation/extrapolation time.</summary>
@@ -5099,6 +5105,16 @@
             <summary>Factory for creating a predictor.</summary>
             <returns>Predictor</returns>
         </member>
+        <member name="T:KS.Reactor.Client.Adaptors.ksEntity.TransformUpdater">
+            <summary>
+            Callback to update a locally-owned entity's transform when it's time to send a transform update to the
+            server. If you set a value on <paramref name="transform"/>, it will set a dirty flag for that value and
+            generate an update to send to the server, even if that value did not change. You should check if the value
+            changed before setting a value.
+            </summary>
+            <param name="entity">Entity to get transform update for.</param>
+            <param name="transform">Transform to update.</param>
+        </member>
         <member name="F:KS.Reactor.Client.Adaptors.ksEntity.InputPredictorFactory">
             <summary>
             Factory for creating predictors for entities with player controllers that use input prediction.
@@ -5114,6 +5130,12 @@
         </member>
         <member name="P:KS.Reactor.Client.Adaptors.ksEntity.Scripts">
             <summary>List of scripts attached to the entity.</summary>
+        </member>
+        <member name="P:KS.Reactor.Client.Adaptors.ksEntity.OwnedTransformUpdater">
+            <summary>
+            Callback to call if the entity is owned-locally with the transform permission to get a transform update to
+            send to the server.
+            </summary>
         </member>
         <member name="M:KS.Reactor.Client.Adaptors.ksEntity.#ctor">
             <summary>Default constructor</summary>
@@ -5139,6 +5161,13 @@
             <summary>Calls an RPC on this entity on the server.</summary>
             <param name="rpcId">rpcId of rpc to call.</param>
             <param name="arguments">arguments to send to server.</param>
+        </member>
+        <member name="M:KS.Reactor.Client.Adaptors.ksEntity.GetTransformUpdate(KS.Reactor.ksTransformState)">
+            <summary>
+            Called on locally owned entities with the transform permission. Calls the
+            <see cref="P:KS.Reactor.Client.Adaptors.ksEntity.OwnedTransformUpdater"/> if there is one to get a transform update to send to the server.
+            </summary>
+            <param name="transform"></param>
         </member>
         <member name="T:KS.Reactor.Client.Adaptors.ksEntityScript">
             <summary>Base class for scripts that can be attached to entities.</summary>
@@ -5245,6 +5274,18 @@
             <param name="rpcId">RPC ID</param>
             <param name="rpcArgs">RPC arguments</param>
             <returns>True if the method invoked any RPC handler</returns>
+        </member>
+        <member name="M:KS.Reactor.Client.Adaptors.ksRoom.SpawnEntity(KS.Reactor.ksSpawnParams,KS.Reactor.ksMultiType[])">
+            <summary>
+            Spawns an entity on the client and sends a request to the server to spawn the entity. The entity will have
+            a temporary spawn id until the server validates the spawn. If the server denies the spawn, the entity will
+            be destroyed.
+            </summary>
+            <param name="spawnParams">Spawn parameters. Must have a non-zero asset id.</param>
+            <param name="args">
+            Additional arguments to send to the server. These will be available in the server player spawn entity event.
+            </param>
+            <returns>Spawned entity</returns>
         </member>
         <member name="T:KS.Reactor.Client.Adaptors.ksRoomScript">
             <summary>Base class for scripts that can be attached to rooms.</summary>
