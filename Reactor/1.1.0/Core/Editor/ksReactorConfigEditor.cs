@@ -107,18 +107,18 @@ namespace KS.Reactor.Client.Unity.Editor
         {
             switch (m_changedPropertyName)
             {
-                case "DefineSymbols":
+                case nameof(ksReactorConfig.Server.DefineSymbols):
                 {
                     ksServerScriptCompiler.Instance.BuildServerRuntime();
                     break;
                 }
-                case "ServerPath":
+                case nameof(ksReactorConfig.Server.OverrideServerPath):
                 {
                     ksServerProjectUpdater.Instance.UpdateOutputPath();
                     ksServerScriptCompiler.Instance.BuildServerRuntime();
                     break;
                 }
-                case "MonoPath":
+                case nameof(ksReactorConfig.Server.MonoPath):
                 {
                     ksServerProjectUpdater.Instance.UpdateOutputPath();
                     ksServerScriptCompiler.Instance.BuildServerRuntime();

@@ -701,10 +701,16 @@ namespace KS.Reactor.Client.Unity.Editor
         {
             m_guiSceneText.Clear();
             m_guiRoomText.Clear();
+            int oldBoundId = m_guiBoundImage == null ? -1 : m_guiBoundImage.Id;
             m_guiBoundImage = m_service.BoundImage;
             if (m_guiBoundImage == null)
             {
                 return;
+            }
+            if (oldBoundId != m_guiBoundImage.Id)
+            {
+                // Update servers so servers of the bound image are moved from "Other Servers" to "Running Servers".
+                m_updateServers = true;
             }
 
             int index = 0;

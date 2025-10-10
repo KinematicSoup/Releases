@@ -6602,6 +6602,16 @@
             <param name="throwExceptions">True to throw an exception if the type cannot be converted.</param>
             <returns>String array</returns>
         </member>
+        <member name="M:KS.Reactor.ksMultiType.CloneArray">
+            <summary>Returns a copy of the referenced array, or null if the multi-type is not an array type.</summary>
+            <returns>Copy of the referenced array, or null if the multi-type is not an array type.</returns>
+        </member>
+        <member name="M:KS.Reactor.ksMultiType.CloneArray``1(``0[])">
+            <summary>Creates a copy of an array.</summary>
+            <typeparam name="T">Array element type</typeparam>
+            <param name="array">Array to clone</param>
+            <returns>Cloned array</returns>
+        </member>
         <member name="M:KS.Reactor.ksMultiType.Serialize(KS.Reactor.ksStreamBuffer)">
             <summary>Serializes the multi-type to a <see cref="T:KS.Reactor.ksStreamBuffer"/>.</summary>
             <param name="output">Output to serialize to.</param>
@@ -8103,11 +8113,15 @@
             Extends the built-in C# Random class with methods for generating floats, vectors, and quaternions.
             </summary>
         </member>
+        <member name="M:KS.Reactor.ksRandom.GetRandomSeed">
+            <summary>Gets a random seed.</summary>
+            <returns>Random seed</returns>
+        </member>
         <member name="P:KS.Reactor.ksRandom.Seed">
             <summary>Initial seed.</summary>
         </member>
         <member name="M:KS.Reactor.ksRandom.#ctor">
-            <summary>Constructor. Initializes the seed to the microsecond timestamp.</summary>
+            <summary>Constructor. Initializes the seed to a random value.</summary>
         </member>
         <member name="M:KS.Reactor.ksRandom.#ctor(System.Int32)">
             <summary>Constructor.</summary>
@@ -8981,10 +8995,6 @@
             <summary>
             The asset id of the entity to spawn. If non-zero, this is used to identify the entity to spawn instead of
             <see cref="!:EntityType."/>. Can be used to spawn a specific entity in a collection.
-            
-            This is currently internal since we don't have a unified way for getting the asset ids on the client and
-            server, and the asset ids are not easily accessible from the server API.
-            It is used in client-to-server spawn RPCs.
             </summary>
         </member>
         <member name="P:KS.Reactor.ksSpawnParams.Transform">
@@ -9017,6 +9027,10 @@
         <member name="M:KS.Reactor.ksSpawnParams.#ctor(System.String)">
             <summary>Constructor</summary>
             <param name="entityType">Entity type to spawn</param>
+        </member>
+        <member name="M:KS.Reactor.ksSpawnParams.#ctor(System.UInt32)">
+            <summary>Constructor</summary>
+            <param name="assetId">Asset id of entity to spawn.</param>
         </member>
         <member name="M:KS.Reactor.ksSpawnParams.Validate(System.Boolean)">
             <summary>Validates the parameters.</summary>
@@ -9070,6 +9084,10 @@
         <member name="M:KS.Reactor.ksSpawnParams2D.#ctor(System.String)">
             <summary>Constructor</summary>
             <param name="entityType">Entity type to spawn</param>
+        </member>
+        <member name="M:KS.Reactor.ksSpawnParams2D.#ctor(System.UInt32)">
+            <summary>Constructor</summary>
+            <param name="assetId">Asset id of entity to spawn.</param>
         </member>
         <member name="M:KS.Reactor.ksSpawnParams2D.Create">
             <summary>

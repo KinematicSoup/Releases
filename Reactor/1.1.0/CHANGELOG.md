@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.0-1] - 2025-10-10
+
+### Added
+- Compression is enabled for the local development server.
+- The local development server is capped to 32 connected players.
+
+### Fixed
+- Fixed a bug where a property owner changing an array property element and reassigning the property would not sync the change to the server.
+- Manually entering a server override path now works correctly.
+- Fixed a bug that caused running servers of the bound image to appear under "Other Servers" instead of "Running Servers" for several seconds after exiting play mode.
+- Setting ksAnimationSync.Animator for the first time in play mode now works correctly.
+- Linear predictor improvements to reduce jitter when connecting that was more prominent with player-owned entities.
+
+### Changed
+- The ksRandom default constructor no longer initializes the seed to the timestamp so constructing multiple instances at the same time will all use a different seed.
+
+### Removed
+- Removed public m_object field from ksMultiType.
+
 ## [1.1.0-0] - 2025-08-14
 
 ### Added

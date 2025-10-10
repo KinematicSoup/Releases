@@ -40,14 +40,13 @@ namespace KS.Reactor.Client.Unity
                 {
                     return;
                 }
-                Animator oldValue = m_animator;
                 m_animator = value;
 
-                if ((object)value == null)
+                if (value == null)
                 {
                     Detached();
                 }
-                else if ((object)oldValue == null)
+                else if (!m_initialized)
                 {
                     Initialize();
                 }
@@ -115,12 +114,20 @@ namespace KS.Reactor.Client.Unity
         [SerializeField]
         private float m_crossFadeDuration = .2f;
 
+        // This tag is needed to prevent Unity from complaining about the same field name being serialized multiple
+        // times, even though neither this or the base class field should be serialized.
+        [NonSerialized]
+        private bool m_initialized = false;
         private bool m_applyRootMotion;
         private List<KeyValuePair<uint, ksDelegates.PropertyChangeHandler>> m_propertyChangeHandlers;
 
         /// <summary>Initialization. Registers event listeners for syncing animation data.</summary>
         public override void Initialize()
         {
+            if (m_initialized)
+            {
+                return;
+            }
             if (m_animator == null)
             {
                 m_animator = GetComponent<Animator>();
@@ -129,6 +136,7 @@ namespace KS.Reactor.Client.Unity
                     return;
                 }
             }
+            m_initialized = true;
 
             Entity.OnOwnershipChange += OwnershipChanged;
             if (Entity.HasOwnerPermission(ksOwnerPermissions.PROPERTIES))
@@ -144,6 +152,11 @@ namespace KS.Reactor.Client.Unity
         /// <summary>Unregisters event listeners.</summary>
         public override void Detached()
         {
+            if (!m_initialized)
+            {
+                return;
+            }
+            m_initialized = false;
             if (!Entity.HasOwnerPermission(ksOwnerPermissions.PROPERTIES))
             {
                 // Set apply root motion to what it was before we disabled it.

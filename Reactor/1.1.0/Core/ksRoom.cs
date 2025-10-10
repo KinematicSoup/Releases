@@ -481,8 +481,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -501,8 +501,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -523,8 +523,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -550,8 +550,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -582,8 +582,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -616,8 +616,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -638,8 +638,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -666,8 +666,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="prefab">
         /// Prefab to spawn. Must have a <see cref="ksEntityComponent"/> with a non-zero asset id. If asset is is zero,
@@ -732,8 +732,8 @@ namespace KS.Reactor.Client.Unity
         }
 
         /// <summary>
-        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have id zero
-        /// until the server confirms the spawn.
+        /// Spawns an entity on the client and sends a request to spawn it on the server. The entity will have a
+        /// temporary spawn id until the server confirms the spawn.
         /// </summary>
         /// <param name="spawnParams">Spawn parameters</param>
         /// <param name="args">
