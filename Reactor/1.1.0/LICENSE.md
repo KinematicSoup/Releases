@@ -36,11 +36,11 @@ Does not grant any right to redistribute, resell, or sublicense the Software its
 All rights not expressly granted herein are reserved by KinematicSoup.
 
 3. Account Obligations
-a. Accuracy & Honesty. You shall provide complete and accurate registration information and keep it up to date. You shall not impersonate any person or entity or misrepresent your affiliation.
+ 1. Accuracy & Honesty. You shall provide complete and accurate registration information and keep it up to date. You shall not impersonate any person or entity or misrepresent your affiliation.
 
-b. Confidentiality. You are responsible for safeguarding your Account credentials. You shall not share your Account or permit others to access the Software under your Account.
+ 2. Confidentiality. You are responsible for safeguarding your Account credentials. You shall not share your Account or permit others to access the Software under your Account.
 
-c. Unauthorized Access. You shall not attempt to access Accounts, content, data or systems belonging to other users or KinematicSoup.
+ 3. Unauthorized Access. You shall not attempt to access Accounts, content, data or systems belonging to other users or KinematicSoup.
 
 4. Acceptable Use Restrictions
  1. Computational Abuse. Use the Software for cryptocurrency mining, password cracking, distributed denial‑of‑service attacks, or other computationally‑ or bandwidth‑intensive activities unrelated to normal real‑time collaboration or multiplayer gaming.
@@ -151,3 +151,4 @@ If you have any questions about this Agreement, please contact us at:
  KinematicSoup Ltd.
 
  Email: legal@kinematicsoup.com
+
