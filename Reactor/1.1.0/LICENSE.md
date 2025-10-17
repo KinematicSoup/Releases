@@ -19,9 +19,9 @@ These Terms and Conditions (“Agreement”) govern your access to and use of th
 2. License Grant
 Subject to the terms and conditions of this Agreement, KinematicSoup hereby grants you a limited, non-exclusive, non-transferable, non-sublicensable license to:
 
- 1. Use the Software on Licensed Platforms: Install, access, and use the Software on the platforms specified in your purchase or subscription.
+ 1.Use the Software on Licensed Platforms: Install, access, and use the Software on the platforms specified in your purchase or subscription.
 
- 2. Develop and Deploy Applications: Create, develop, and deploy applications that incorporate the Software for internal use or distribution in accordance with this Agreement.
+ 2.Develop and Deploy Applications: Create, develop, and deploy applications that incorporate the Software for internal use or distribution in accordance with this Agreement.
 
 Self-Hosting Permission: Notwithstanding any restrictions in Sections 4 or elsewhere in this Agreement, you may deploy and run the Software on your own servers for self-hosted multiplayer instances with up to 32 concurrent players per instance at no cost. Such self-hosted use:
 
@@ -36,39 +36,39 @@ Does not grant any right to redistribute, resell, or sublicense the Software its
 All rights not expressly granted herein are reserved by KinematicSoup.
 
 3. Account Obligations
- 1. Accuracy & Honesty. You shall provide complete and accurate registration information and keep it up to date. You shall not impersonate any person or entity or misrepresent your affiliation.
+ 1.Accuracy & Honesty. You shall provide complete and accurate registration information and keep it up to date. You shall not impersonate any person or entity or misrepresent your affiliation.
 
- 2. Confidentiality. You are responsible for safeguarding your Account credentials. You shall not share your Account or permit others to access the Software under your Account.
+ 2.Confidentiality. You are responsible for safeguarding your Account credentials. You shall not share your Account or permit others to access the Software under your Account.
 
- 3. Unauthorized Access. You shall not attempt to access Accounts, content, data or systems belonging to other users or KinematicSoup.
+ 3.Unauthorized Access. You shall not attempt to access Accounts, content, data or systems belonging to other users or KinematicSoup.
 
 4. Acceptable Use Restrictions
- 1. Computational Abuse. Use the Software for cryptocurrency mining, password cracking, distributed denial‑of‑service attacks, or other computationally‑ or bandwidth‑intensive activities unrelated to normal real‑time collaboration or multiplayer gaming.
+ 1.Computational Abuse. Use the Software for cryptocurrency mining, password cracking, distributed denial‑of‑service attacks, or other computationally‑ or bandwidth‑intensive activities unrelated to normal real‑time collaboration or multiplayer gaming.
 
- 2. Illegal or Harmful Content. Use the Software to create, distribute or host any content that is unlawful, defamatory, harassing, harmful, obscene, infringing, or otherwise objectionable.
+ 2.Illegal or Harmful Content. Use the Software to create, distribute or host any content that is unlawful, defamatory, harassing, harmful, obscene, infringing, or otherwise objectionable.
 
- 3. Reputation Harm. Engage in any activity that harms KinematicSoup’s reputation or goodwill.
+ 3.Reputation Harm. Engage in any activity that harms KinematicSoup’s reputation or goodwill.
 
- 4. Reverse Engineering. Decompile, disassemble, reverse‑engineer, or otherwise attempt to derive source code, algorithms or network protocols from the Software.
+ 4.Reverse Engineering. Decompile, disassemble, reverse‑engineer, or otherwise attempt to derive source code, algorithms or network protocols from the Software.
 
- 5. Derivative Works & Redistribution. Modify, create derivative works of, redistribute, sublicense, sell or rent any part of the Software or Documentation.
+ 5.Derivative Works & Redistribution. Modify, create derivative works of, redistribute, sublicense, sell or rent any part of the Software or Documentation.
 
- 6. Infrastructure Interference. Hack, probe, scan or test the vulnerability of KinematicSoup’s servers or network infrastructure, or interfere with the operation of the Software.
+ 6.Infrastructure Interference. Hack, probe, scan or test the vulnerability of KinematicSoup’s servers or network infrastructure, or interfere with the operation of the Software.
 
- 7. Bug Exploitation. Exploit or publicly disclose any security vulnerability or bug in the Software, except that you may report such issues to bugs@kinematicsoup.com.
+ 7.Bug Exploitation. Exploit or publicly disclose any security vulnerability or bug in the Software, except that you may report such issues to bugs@kinematicsoup.com.
 
- 8. Unlicensed Platforms. Use the Software on any platform, service or environment for which you have not obtained KinematicSoup’s prior written consent.
+ 8.Unlicensed Platforms. Use the Software on any platform, service or environment for which you have not obtained KinematicSoup’s prior written consent.
 
- 9. Policy Violations. Use the Software in violation of this Agreement or KinematicSoup’s Privacy Policy.
+ 9.Policy Violations. Use the Software in violation of this Agreement or KinematicSoup’s Privacy Policy.
 
- 10. Trademark Misuse. Use any trademarks, service marks, logos or trade names confusingly similar to “KinematicSoup” or the names of its products.
+ 10.Trademark Misuse. Use any trademarks, service marks, logos or trade names confusingly similar to “KinematicSoup” or the names of its products.
 
 5. Fees, Payment & No Refunds
- 1. Paid Licenses: Except as expressly provided for in Section 2.3 (Self-Hosting Permission), use of the Software may require payment of License Fees as specified in the applicable purchase or subscription terms.
+ 1.Paid Licenses: Except as expressly provided for in Section 2.3 (Self-Hosting Permission), use of the Software may require payment of License Fees as specified in the applicable purchase or subscription terms.
 
- 2. No Cost Self-Hosting: Deployment and operation of self-hosted multiplayer instances with up to 32 concurrent players per instance are permitted at no cost and do not trigger any License Fees.
+ 2.No Cost Self-Hosting: Deployment and operation of self-hosted multiplayer instances with up to 32 concurrent players per instance are permitted at no cost and do not trigger any License Fees.
 
- 3. No Refunds: All payments made for licenses are non-refundable unless otherwise stated in a separate written agreement with KinematicSoup.
+ 3.No Refunds: All payments made for licenses are non-refundable unless otherwise stated in a separate written agreement with KinematicSoup.
 
 6. Confidentiality
 Each party (the “Recipient”) agrees to hold in strict confidence and not disclose any Confidential Information of the other party (the “Discloser”) without the Discloser’s prior written consent. The Recipient shall use the same degree of care to protect such Confidential Information as it uses to protect its own confidential information, but in no event less than reasonable care. Confidentiality obligations shall not apply to information that is publicly known, rightfully received from a third party, independently developed, or required to be disclosed by law. This Section survives termination.
@@ -110,11 +110,11 @@ All fees are exclusive of taxes. Customer is responsible for all sales, use, VAT
 Customer may provide feedback, suggestions or feature requests (“Feedback”). Customer grants KinematicSoup a perpetual, irrevocable, royalty‑free, worldwide license to use, modify and incorporate such Feedback into its products and services without restriction.
 
 19. Termination
-a. Termination for Cause. KinematicSoup may suspend or terminate this Agreement and your access to the Software immediately upon any breach of this Agreement or failure to pay License Fees.
+ 1.Termination for Cause. KinematicSoup may suspend or terminate this Agreement and your access to the Software immediately upon any breach of this Agreement or failure to pay License Fees.
 
-b. Effect of Termination. Upon termination, all rights granted to you under this Agreement shall immediately cease, and you must uninstall and cease all use of the Software.
+ 2.Effect of Termination. Upon termination, all rights granted to you under this Agreement shall immediately cease, and you must uninstall and cease all use of the Software.
 
-c. Survival. Sections 3 (Account Obligations), 4 (Acceptable Use Restrictions), 5 (Fees), 6 (Confidentiality), 7 (Support & Maintenance), 9 (Data Protection & Privacy), 11 (Audit Rights), 13 (Third‑Party Components), 15 (Notices), 19.2 (Effect of Termination), 20 (Intellectual Property), 21 (Disclaimer), 22 (Limitation of Liability), 23 (Indemnification), and 24 (Miscellaneous) shall survive termination.
+ 3.Survival. Sections 3 (Account Obligations), 4 (Acceptable Use Restrictions), 5 (Fees), 6 (Confidentiality), 7 (Support & Maintenance), 9 (Data Protection & Privacy), 11 (Audit Rights), 13 (Third‑Party Components), 15 (Notices), 19.2 (Effect of Termination), 20 (Intellectual Property), 21 (Disclaimer), 22 (Limitation of Liability), 23 (Indemnification), and 24 (Miscellaneous) shall survive termination.
 
 20. Intellectual Property
 All title, ownership and intellectual property rights in and to the Software, Documentation, and any copies thereof remain with KinematicSoup and its licensors. This Agreement does not transfer any such rights to you.
@@ -127,28 +127,29 @@ TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL KINEMATICS OUP OR ITS 
 
 23. Indemnification
 You agree to indemnify, defend and hold harmless KinematicSoup and its officers, directors, employees and agents from and against any claims, liabilities, damages, losses or expenses (including reasonable attorneys’ fees) arising out of or related to:
- 1. Your breach of this Agreement;
- 2. Your use of the Software in violation of law or third‑party rights; or
- 3. Content you create or distribute using the Software.
+ 1.Your breach of this Agreement;
+ 2.Your use of the Software in violation of law or third‑party rights; or
+ 3.Content you create or distribute using the Software.
 
 24. Miscellaneous
-a. Governing Law & Venue. This Agreement shall be governed by the laws of the Province of British Columbia and the laws of Canada applicable therein. The parties submit to the exclusive jurisdiction of the courts located in Vancouver, British Columbia.
+ 1.Governing Law & Venue. This Agreement shall be governed by the laws of the Province of British Columbia and the laws of Canada applicable therein. The parties submit to the exclusive jurisdiction of the courts located in Vancouver, British Columbia.
 
-b. Force Majeure. Neither party shall be liable for delays or failures in performance due to causes beyond its reasonable control.
+ 2.Force Majeure. Neither party shall be liable for delays or failures in performance due to causes beyond its reasonable control.
 
-c. Severability. If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall continue in full force and effect.
+ 3.Severability. If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall continue in full force and effect.
 
-d. Interpretation. Headings are for reference only and shall not affect interpretation. The term “including” means “without limitation.”
+ 4.Interpretation. Headings are for reference only and shall not affect interpretation. The term “including” means “without limitation.”
 
-e. Electronic Acceptance & Counterparts. This Agreement is binding upon Customer by clicking the acceptance checkbox on the web form or by using the Software, which constitutes a valid electronic signature. This Agreement may be executed in counterparts, each of which shall be deemed an original, and all of which together constitute one instrument.
+ 5.Electronic Acceptance & Counterparts. This Agreement is binding upon Customer by clicking the acceptance checkbox on the web form or by using the Software, which constitutes a valid electronic signature. This Agreement may be executed in counterparts, each of which shall be deemed an original, and all of which together constitute one instrument.
 
-f. No Oral Modifications. No amendment or waiver of any provision of this Agreement shall be effective unless in writing and signed by both parties.
+ 6.No Oral Modifications. No amendment or waiver of any provision of this Agreement shall be effective unless in writing and signed by both parties.
 
-g. Entire Agreement. This Agreement, together with any Order Forms, exhibits and the SLA, constitutes the entire agreement between you and KinematicSoup regarding the Software and supersedes all prior or contemporaneous communications.
+ 7.Entire Agreement. This Agreement, together with any Order Forms, exhibits and the SLA, constitutes the entire agreement between you and KinematicSoup regarding the Software and supersedes all prior or contemporaneous communications.
 
 Contact Information
 If you have any questions about this Agreement, please contact us at:
  KinematicSoup Ltd.
 
  Email: legal@kinematicsoup.com
+
 
