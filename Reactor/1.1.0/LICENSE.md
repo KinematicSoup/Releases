@@ -2,8 +2,7 @@ Reactor Multiplayer Engine and Scene Fusion
 
 Licensing, Terms and Conditions
 
-Last Updated, April 8, 2025
-
+Last Updated, October 16, 2025
 Updates to this license are available at https://kinematicsoup.com/terms
 
 These Terms and Conditions (“Agreement”) govern your access to and use of the Scene Fusion real‑time collaboration and Reactor Multiplayer Engine products (collectively, the “Software”) provided by KinematicSoup (“KinematicSoup,” “we,” “us” or “our”). By downloading, installing, accessing or using the Software, you (“you,” “your” or “Customer”) agree to be bound by this Agreement. If you do not agree, do not use the Software.
@@ -18,13 +17,23 @@ These Terms and Conditions (“Agreement”) govern your access to and use of th
 “Confidential Information” means any non‑public information disclosed by one party to the other, including technical data, trade secrets, know‑how, software, business plans, and customer information.
 
 2. License Grant
-Subject to your compliance with this Agreement and payment of all applicable fees, KinematicSoup grants you a limited, non‑exclusive, non‑transferable, revocable license to:
+Subject to the terms and conditions of this Agreement, KinematicSoup hereby grants you a limited, non-exclusive, non-transferable, non-sublicensable license to:
 
-a. Install and use the Software solely on Licensed Platforms;
+ 1. Use the Software on Licensed Platforms: Install, access, and use the Software on the platforms specified in your purchase or subscription.
 
-b. Access and use the Documentation solely in support of your authorized use of the Software.
+ 2. Develop and Deploy Applications: Create, develop, and deploy applications that incorporate the Software for internal use or distribution in accordance with this Agreement.
 
-All rights not expressly granted are reserved by KinematicSoup.
+Self-Hosting Permission: Notwithstanding any restrictions in Sections 4 or elsewhere in this Agreement, you may deploy and run the Software on your own servers for self-hosted multiplayer instances with up to 32 concurrent players per instance at no cost. Such self-hosted use:
+
+Does not require payment of License Fees;
+
+Is limited to 32 concurrent players per instance;
+
+Must comply with all other terms of this Agreement, including Acceptable Use Restrictions in Section 4;
+
+Does not grant any right to redistribute, resell, or sublicense the Software itself.
+
+All rights not expressly granted herein are reserved by KinematicSoup.
 
 3. Account Obligations
 a. Accuracy & Honesty. You shall provide complete and accurate registration information and keep it up to date. You shall not impersonate any person or entity or misrepresent your affiliation.
@@ -34,34 +43,32 @@ b. Confidentiality. You are responsible for safeguarding your Account credential
 c. Unauthorized Access. You shall not attempt to access Accounts, content, data or systems belonging to other users or KinematicSoup.
 
 4. Acceptable Use Restrictions
-1. Computational Abuse. Use the Software for cryptocurrency mining, password cracking, distributed denial‑of‑service attacks, or other computationally‑ or bandwidth‑intensive activities unrelated to normal real‑time collaboration or multiplayer gaming.
+ 1. Computational Abuse. Use the Software for cryptocurrency mining, password cracking, distributed denial‑of‑service attacks, or other computationally‑ or bandwidth‑intensive activities unrelated to normal real‑time collaboration or multiplayer gaming.
 
-2. Illegal or Harmful Content. Use the Software to create, distribute or host any content that is unlawful, defamatory, harassing, harmful, obscene, infringing, or otherwise objectionable.
+ 2. Illegal or Harmful Content. Use the Software to create, distribute or host any content that is unlawful, defamatory, harassing, harmful, obscene, infringing, or otherwise objectionable.
 
-3. Reputation Harm. Engage in any activity that harms KinematicSoup’s reputation or goodwill.
+ 3. Reputation Harm. Engage in any activity that harms KinematicSoup’s reputation or goodwill.
 
-4. Reverse Engineering. Decompile, disassemble, reverse‑engineer, or otherwise attempt to derive source code, algorithms or network protocols from the Software.
+ 4. Reverse Engineering. Decompile, disassemble, reverse‑engineer, or otherwise attempt to derive source code, algorithms or network protocols from the Software.
 
-5. Derivative Works & Redistribution. Modify, create derivative works of, redistribute, sublicense, sell or rent any part of the Software or Documentation.
+ 5. Derivative Works & Redistribution. Modify, create derivative works of, redistribute, sublicense, sell or rent any part of the Software or Documentation.
 
-6. Infrastructure Interference. Hack, probe, scan or test the vulnerability of KinematicSoup’s servers or network infrastructure, or interfere with the operation of the Software.
+ 6. Infrastructure Interference. Hack, probe, scan or test the vulnerability of KinematicSoup’s servers or network infrastructure, or interfere with the operation of the Software.
 
-7. Bug Exploitation. Exploit or publicly disclose any security vulnerability or bug in the Software, except that you may report such issues to bugs@kinematicsoup.com.
+ 7. Bug Exploitation. Exploit or publicly disclose any security vulnerability or bug in the Software, except that you may report such issues to bugs@kinematicsoup.com.
 
-8. Unlicensed Platforms. Use the Software on any platform, service or environment for which you have not obtained KinematicSoup’s prior written consent.
+ 8. Unlicensed Platforms. Use the Software on any platform, service or environment for which you have not obtained KinematicSoup’s prior written consent.
 
-9. Policy Violations. Use the Software in violation of this Agreement or KinematicSoup’s Privacy Policy.
+ 9. Policy Violations. Use the Software in violation of this Agreement or KinematicSoup’s Privacy Policy.
 
-10. Trademark Misuse. Use any trademarks, service marks, logos or trade names confusingly similar to “KinematicSoup” or the names of its products.
+ 10. Trademark Misuse. Use any trademarks, service marks, logos or trade names confusingly similar to “KinematicSoup” or the names of its products.
 
 5. Fees, Payment & No Refunds
-a. License Fees. You agree to pay all fees specified on the Reactor and Scene Fusion licensing pages (“License Fees”).
+ 1. Paid Licenses: Except as expressly provided for in Section 2.3 (Self-Hosting Permission), use of the Software may require payment of License Fees as specified in the applicable purchase or subscription terms.
 
-b. Payment Terms. License Fees are due in accordance with the invoicing terms; late payments may incur interest.
+ 2. No Cost Self-Hosting: Deployment and operation of self-hosted multiplayer instances with up to 32 concurrent players per instance are permitted at no cost and do not trigger any License Fees.
 
-c. No Refunds. All fees are non‑refundable, except as required by applicable law.
-
-d. Late Payment Charges. KinematicSoup may charge interest on any overdue amounts at a rate of 1% per month, or the maximum rate permitted by law, whichever is lower.
+ 3. No Refunds: All payments made for licenses are non-refundable unless otherwise stated in a separate written agreement with KinematicSoup.
 
 6. Confidentiality
 Each party (the “Recipient”) agrees to hold in strict confidence and not disclose any Confidential Information of the other party (the “Discloser”) without the Discloser’s prior written consent. The Recipient shall use the same degree of care to protect such Confidential Information as it uses to protect its own confidential information, but in no event less than reasonable care. Confidentiality obligations shall not apply to information that is publicly known, rightfully received from a third party, independently developed, or required to be disclosed by law. This Section survives termination.
@@ -142,4 +149,5 @@ g. Entire Agreement. This Agreement, together with any Order Forms, exhibits and
 Contact Information
 If you have any questions about this Agreement, please contact us at:
  KinematicSoup Ltd.
+
  Email: legal@kinematicsoup.com
