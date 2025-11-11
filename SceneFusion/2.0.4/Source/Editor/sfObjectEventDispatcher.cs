@@ -201,7 +201,8 @@ namespace KS.SceneFusion2.Unity.Editor
             sfObject current = m_objectMap.GetSFObject(uobj);
             if ((current != null && current.IsSyncing) ||
                 (sfLoader.Get().IsAsset(uobj) && !sfLoader.Get().IsSyncableAssetType(uobj) &&
-                (!sfConfig.Get().SyncPrefabs || !PrefabUtility.IsPartOfPrefabAsset(uobj))))
+                (sfConfig.Get().SyncPrefabs != sfConfig.PrefabSyncMode.FULL ||
+                !PrefabUtility.IsPartOfPrefabAsset(uobj))))
             {
                 return false;
             }

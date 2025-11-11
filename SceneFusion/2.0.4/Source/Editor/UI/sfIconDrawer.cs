@@ -122,7 +122,7 @@ namespace KS.SceneFusion2.Unity.Editor
         private void DrawIcons(UObject uobj, Rect area)
         {
             sfObject obj = sfObjectMap.Get().GetSFObject(uobj);
-            if (sfConfig.Get().SyncPrefabs && obj == null)
+            if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL && obj == null)
             {
                 // If the object is a stage object, get the prefab object instead.
                 UObject prefab = sfPrefabStageMap.Get().GetPrefabObject(uobj);

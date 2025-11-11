@@ -305,6 +305,13 @@ namespace KS.SceneFusion2.Unity.Editor
             m_generators[typeof(T)] = generator;
         }
 
+        /// <summary>Unregisters a syncable asset type, preventing assets of that type from syncing.</summary>
+        /// <typeparam name="T"></typeparam>
+        public void UnregisterSyncableType<T>()
+        {
+            m_generators.Remove(typeof(T));
+        }
+
         /// <summary>Gets the local file id of an asset.</summary>
         /// <param name="asset">asset to get local file id for.</param>
         /// <returns>local file id of the asset, or 0 if the uobject is not an asset.</returns>

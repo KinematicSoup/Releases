@@ -563,7 +563,7 @@ namespace KS.SceneFusion2.Unity.Editor
         }
 
         /// <summary>Called when the scene GUI is drawn. Invokes terrain edit events based on user input.</summary>
-        private void OnSceneGUI(SceneView sceneView)
+        protected override void OnSceneGUI(SceneView sceneView)
         {
             if (m_terrain == null || m_terrain.gameObject.GetComponent<TerrainCollider>() == null)
             {
@@ -1237,7 +1237,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// <returns>PlaceTreeWizard associated with the current terrain.</returns>
         private EditorWindow GetPlaceTreeWizard()
         {
-            UnityEngine.Object[] windows = ksEditorUtils.FindWindows("PlaceTreeWizard", "UnityEditor");
+            UObject[] windows = ksEditorUtils.FindWindows("PlaceTreeWizard", m_editorAssembly);
             if (windows.Length == 0)
             {
                 return null;

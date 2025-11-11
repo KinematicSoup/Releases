@@ -19,6 +19,12 @@ namespace KS.SceneFusion2.Unity.Editor
         }
         private sfService m_service;
 
+        /// <summary>Scene Fusion version</summary>
+        public ksVersion Version
+        {
+            get { return sfConfig.Get().Version; }
+        }
+
         /// <summary>
         /// Did we reconnect to the current session after disconnecting temporarily to recompile or enter play mode?
         /// </summary>
@@ -49,20 +55,9 @@ namespace KS.SceneFusion2.Unity.Editor
         /// <summary>Initialization</summary>
         protected override void Initialize()
         {
-            ksVersion version = new ksVersion();
-            try
-            {
-                version = ksVersion.FromString(sfConfig.Get().Version);
-            }
-            catch (Exception ex)
-            {
-                ksLog.Error(this, "Error parsing version string " + sfConfig.Get().Version, ex);
-            }
-
             m_service = new sfService();
             m_service.OnConnect += OnConnect;
             m_service.OnDisconnect += OnDisconnect;
-            m_service.Version = version;
 #if MOCK_WEB_SERVICE
             m_service.WebService = new sfMockWebService();
 #else
@@ -152,7 +147,7 @@ namespace KS.SceneFusion2.Unity.Editor
 
             // Show getting started window
             if ((sfConfig.Get().ShowGettingStartedScreen && m_isFirstLoad) ||
-                sfConfig.Get().Version != sfConfig.Get().LastVersion)
+                sfConfig.Get().Version.ToString() != sfConfig.Get().LastVersion)
             {
                 sfGettingStartedWindow.Get().Open();
             }
@@ -364,7 +359,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// </summary>
         private void StartConfigDependentManagers()
         {
-            if (sfConfig.Get().SyncPrefabs)
+            if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL)
             {
                 sfPrefabStageMap.Get().Start();
                 sfPrefabEventManager.Get().Start();
@@ -400,7 +395,7 @@ namespace KS.SceneFusion2.Unity.Editor
             sfUnityEventDispatcher.Get().Disable();
             sfGuidManager.Get().SaveGuids();
             sfGuidManager.Get().Clear();
-            if (sfConfig.Get().SyncPrefabs)
+            if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL)
             {
                 sfPrefabStageMap.Get().Stop();
                 sfPrefabEventManager.Get().Stop();

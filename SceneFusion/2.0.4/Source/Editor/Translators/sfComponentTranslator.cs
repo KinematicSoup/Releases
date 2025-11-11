@@ -1074,7 +1074,7 @@ namespace KS.SceneFusion2.Unity.Editor
             RemoveDependentComponents(component);
             EditorUtility.SetDirty(component);
             sfPrefabSaver.Get().MarkPrefabDirty(component);
-            UObject.DestroyImmediate(component, sfConfig.Get().SyncPrefabs);
+            UObject.DestroyImmediate(component, sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL);
         }
 
         /// <summary>

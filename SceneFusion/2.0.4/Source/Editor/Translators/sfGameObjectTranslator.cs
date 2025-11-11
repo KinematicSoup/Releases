@@ -366,7 +366,8 @@ namespace KS.SceneFusion2.Unity.Editor
             return gameObject != null && 
                 (gameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor)) == HideFlags.None
                 && !HasComponentThatPreventsSync(gameObject) && PrefabStageUtility.GetPrefabStage(gameObject) == null &&
-                (sfConfig.Get().SyncPrefabs || !PrefabUtility.IsPartOfPrefabAsset(gameObject));
+                (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL ||
+                !PrefabUtility.IsPartOfPrefabAsset(gameObject));
         }
 
         /// <summary>
@@ -1294,7 +1295,7 @@ namespace KS.SceneFusion2.Unity.Editor
             }
             else
             {
-                if (sfConfig.Get().SyncPrefabs)
+                if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL)
                 {
                     // Upload the prefab if it isn't already uploaded.
                     GameObject prefab = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
@@ -2381,7 +2382,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// </returns>
         private List<uint> GetPrefabSourceRevisions(GameObject gameObject, bool uploadPrefabSource = false)
         {
-            if (!sfConfig.Get().SyncPrefabs)
+            if (sfConfig.Get().SyncPrefabs != sfConfig.PrefabSyncMode.FULL)
             {
                 return null;
             }
@@ -2850,7 +2851,8 @@ namespace KS.SceneFusion2.Unity.Editor
 #endif
                     if (gameObject == null)
                     {
-                        if (sfConfig.Get().SyncPrefabs && isPrefabAsset && !createVariantsOfMissingPrefabs)
+                        if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL && isPrefabAsset &&
+                            !createVariantsOfMissingPrefabs)
                         {
                             // The sfObject is for a prefab variant whose source prefab isn't created yet. We need to
                             // the source prefab before we can create the prefab variant.
@@ -3177,7 +3179,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// </param>
         internal void IncrementPrefabRevision(sfObject obj)
         {
-            if (!sfConfig.Get().SyncPrefabs || obj == null || !obj.IsSyncing)
+            if (sfConfig.Get().SyncPrefabs != sfConfig.PrefabSyncMode.FULL || obj == null || !obj.IsSyncing)
             {
                 return;
             }
@@ -3487,7 +3489,7 @@ namespace KS.SceneFusion2.Unity.Editor
             EditorUtility.SetDirty(gameObject);
             try
             {
-                UObject.DestroyImmediate(gameObject, sfConfig.Get().SyncPrefabs);
+                UObject.DestroyImmediate(gameObject, sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL);
             }
             catch (Exception e)
             {
@@ -3798,7 +3800,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// <param name="uobj">uobj that was deselected.</param>
         public override void OnDeselect(sfObject obj, UObject uobj)
         {
-            if (sfConfig.Get().SyncPrefabs)
+            if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.FULL)
             {
                 GameObject gameObject = uobj as GameObject;
                 if (gameObject != null && sfUnityUtils.IsPrefabAssetRoot(gameObject))

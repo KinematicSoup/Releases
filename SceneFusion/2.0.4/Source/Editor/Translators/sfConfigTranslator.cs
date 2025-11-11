@@ -26,7 +26,8 @@ namespace KS.SceneFusion2.Unity.Editor
             if (SceneFusion.Get().Service.IsSessionCreator)
             {
                 sfDictionaryProperty dict = new sfDictionaryProperty();
-                dict[sfProp.SyncPrefabs] = sfConfig.Get().SyncPrefabs;
+                dict[sfProp.SyncPrefabs] = (int)sfConfig.Get().SyncPrefabs;
+                dict[sfProp.SyncMaterials] = sfConfig.Get().SyncMaterials;
                 sfObject obj = new sfObject(sfType.Config, dict);
                 SceneFusion.Get().Service.Session.Create(obj);
 
@@ -56,7 +57,8 @@ namespace KS.SceneFusion2.Unity.Editor
         public override void OnCreate(sfObject obj, int childIndex)
         {
             sfDictionaryProperty dict = (sfDictionaryProperty)obj.Property;
-            sfConfig.Get().SyncPrefabs = (bool)dict[sfProp.SyncPrefabs];
+            sfConfig.Get().SyncPrefabs = (sfConfig.PrefabSyncMode)(int)dict[sfProp.SyncPrefabs];
+            sfConfig.Get().SyncMaterials = (bool)dict[sfProp.SyncMaterials];
 
             sfConfig.Get().SessionSettingsLocked = true;
             if (OnConfigSynced != null)

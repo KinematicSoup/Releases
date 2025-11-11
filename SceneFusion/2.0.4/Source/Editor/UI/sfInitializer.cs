@@ -13,6 +13,18 @@ namespace KS.SceneFusion2.Unity.Editor
     [InitializeOnLoad]
     class sfInitializer
     {
+        /// <summary>Menu group name for Scene Fusion windows.</summary>
+        public const string WINDOWS = "Window/" + Product.NAME + "/";
+
+        /// <summary>Menu group name for other Scene Fusion menu options.</summary>
+        public const string TOOLS = "Tools/" + Product.NAME + "/";
+
+        /// <summary>Menu priority for Scene Fusion windows.</summary>
+        public const int WINDOWS_PRIORITY = 4000;
+
+        /// <summary>Menu priority for Scene Fusion windows.</summary>
+        public const int TOOLS_PRIORITY = 4000;
+
         /// <summary>Static constructor</summary>
         static sfInitializer()
         {
@@ -28,7 +40,7 @@ namespace KS.SceneFusion2.Unity.Editor
             SceneFusionService.Set(SceneFusion.Get().Service);
             sfGettingStartedWindow.OpenSessionWindow = OpenSessionWindow;
 
-            if (sfConfig.Get().Version != sfConfig.Get().LastVersion)
+            if (sfConfig.Get().Version.ToString() != sfConfig.Get().LastVersion)
             {
                 if (sfConfig.Get().LastVersion == "0.0.0")
                 {
@@ -40,7 +52,7 @@ namespace KS.SceneFusion2.Unity.Editor
                 }
                 SerializedObject config = new SerializedObject(sfConfig.Get());
                 SerializedProperty lastVersion = config.FindProperty("LastVersion");
-                lastVersion.stringValue = sfConfig.Get().Version;
+                lastVersion.stringValue = sfConfig.Get().Version.ToString();
                 sfPropertyUtils.ApplyProperties(config);
             }
 
@@ -51,11 +63,11 @@ namespace KS.SceneFusion2.Unity.Editor
                 window.Menu = ScriptableObject.CreateInstance<sfSessionsMenu>();
             }
 
-            sfPackageUpdater.CheckForUpdates(false);
+            sfPackageUpdater.Get().CheckForUpdates();
         }
 
         /// <summary>Opens the sessions menu.</summary>
-        [MenuItem(sfMenu.WINDOWS + "Session", priority = sfMenu.WINDOWS_PRIORITY)]
+        [MenuItem(WINDOWS + "Session", priority = WINDOWS_PRIORITY)]
         private static void OpenSessionWindow()
         {
             ksWindow.Open(ksWindow.SCENE_FUSION_MAIN, delegate (ksWindow window)
@@ -67,24 +79,31 @@ namespace KS.SceneFusion2.Unity.Editor
         }
 
         /// <summary>Opens the notifications window.</summary>
-        [MenuItem(sfMenu.WINDOWS + "Notifications", priority = sfMenu.WINDOWS_PRIORITY + 1)]
+        [MenuItem(WINDOWS + "Notifications", priority = WINDOWS_PRIORITY + 1)]
         private static void OpenNotifications()
         {
             sfNotificationWindow.Open();
         }
 
         /// <summary>Opens the getting started window.</summary>
-        [MenuItem(sfMenu.WINDOWS + "Getting Started", priority = sfMenu.WINDOWS_PRIORITY + 2)]
+        [MenuItem(WINDOWS + "Getting Started", priority = WINDOWS_PRIORITY + 2)]
         private static void OpenGettingStarted()
         {
             sfGettingStartedWindow.Get().Open();
         }
 
         /// <summary>Opens the Scene Fusion project settings.</summary>
-        [MenuItem(sfMenu.WINDOWS + "Settings", priority = sfMenu.WINDOWS_PRIORITY + 3)]
+        [MenuItem(WINDOWS + "Settings", priority = WINDOWS_PRIORITY + 3)]
         public static void OpenSettings()
         {
             SettingsService.OpenProjectSettings("Project/" + Product.NAME);
+        }
+
+        /// <summary>Checks for updates to the Scene Fusion package and prompts the uesr to apply the update.</summary>
+        [MenuItem(TOOLS + "Check for Updates", priority = TOOLS_PRIORITY)]
+        public static void CheckForUpdates()
+        {
+            sfPackageUpdater.Get().CheckForUpdates(null, true);
         }
 
         /// <summary>

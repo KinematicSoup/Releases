@@ -39,29 +39,27 @@ namespace KS.SceneFusion2.Unity.Editor
 
         }
 
-        /// <summary>
-        /// Initialization. Registers materials as syncable type and registers connection event handlers.
-        /// </summary>
+        /// <summary>Initialization. Registers event handlers.</summary>
         private void Initialize()
         {
-            sfLoader.Get().RegisterSyncableType<Material>(() =>
-            {
-                return new Material(sfUserMaterials.CameraMaterial.shader);
-            });
-            SceneFusion.Get().Service.OnConnect += HandleConnect;
-            SceneFusion.Get().Service.OnDisconnect += HandleDisconnect;
+            // We register the Start callback with OnConfigSynced to ensure we have the sfConfig.SyncMaterials setting
+            // synced from the session creator.
+            sfObjectEventDispatcher.Get().GetTranslator<sfConfigTranslator>(sfType.Config).OnConfigSynced += Start;
+            SceneFusion.Get().Service.OnDisconnect += Stop;
         }
 
         /// <summary>
-        /// Called after connecting to a session. Starts polling selected materials for changes if the connection was
-        /// successful.
+        /// Called after config is synced. Starts polling selected materials for changes if
+        /// <see cref="sfConfig.SyncMaterials"/> is true.
         /// </summary>
-        /// <param name="session">Session. Null if there was a connection error.</param>
-        /// <param name="errorMessage">Connect error message. Null if the connection was successful.</param>
-        private void HandleConnect(sfSession session, string errorMessage)
+        private void Start()
         {
-            if (session != null)
+            if (sfConfig.Get().SyncMaterials)
             {
+                sfLoader.Get().RegisterSyncableType<Material>(() =>
+                {
+                    return new Material(sfUserMaterials.CameraMaterial.shader);
+                });
                 sfUnityEventDispatcher.Get().PreUpdate += PollChanges;
                 sfSelectionWatcher.Get().OnDeselect += HandleDeselect;
                 m_pollChangesTimer = POLL_INTERVAL;
@@ -73,10 +71,14 @@ namespace KS.SceneFusion2.Unity.Editor
         /// </summary>
         /// <param name="session">Session</param>
         /// <param name="errorMessage">Disconnect error message</param>
-        private void HandleDisconnect(sfSession session, string errorMessage)
+        private void Stop(sfSession session, string errorMessage)
         {
-            sfUnityEventDispatcher.Get().PreUpdate -= PollChanges;
-            sfSelectionWatcher.Get().OnDeselect -= HandleDeselect;
+            if (sfConfig.Get().SyncMaterials)
+            {
+                sfLoader.Get().UnregisterSyncableType<Material>();
+                sfUnityEventDispatcher.Get().PreUpdate -= PollChanges;
+                sfSelectionWatcher.Get().OnDeselect -= HandleDeselect;
+            }
         }
 
         /// <summary>

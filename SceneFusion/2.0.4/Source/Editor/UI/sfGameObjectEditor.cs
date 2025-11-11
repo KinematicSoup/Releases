@@ -130,7 +130,7 @@ namespace KS.SceneFusion2.Unity.Editor
                     "Prefab editing during a Scene Fusion session is not allowed when prefab syncing is disabled. " +
                     "To enable prefab syncing, end the session, open the ", null,
                     "Scene Fusion settings", "",
-                    ", check the 'Sync Prefabs' checkbox and start a new session.", null) >= 0)
+                    ", set 'Sync Prefabs' to 'Full (Experimental)' and start a new session.", null) >= 0)
                 {
                     sfInitializer.OpenSettings();
                 }

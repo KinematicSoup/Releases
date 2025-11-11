@@ -13,9 +13,8 @@ using KS.SceneFusion;
 namespace KS.SceneFusion2.Unity.Editor
 {
     /// <summary>
-    /// Manages syncing of prefabs created during a session by syncing the prefab file and metafile. Does not sync new
-    /// prefabs if <see cref="sfConfig.SyncPrefabs"/> is true, as prefabs will instead be synced by the
-    /// <see cref="sfGameObjectTranslator"/>
+    /// Manages syncing of prefabs created during a session by syncing the prefab file and metafile if
+    /// <see cref="sfConfig.SyncPrefabs"/> is <see cref="sfConfig.PrefabSyncMode.CREATE_ONLY"/>.
     /// </summary>
     public class sfPrefabTranslator : sfBaseTranslator
     {
@@ -35,7 +34,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// <summary>Registers an on new prefab event handler if prefab syncing is disabled.</summary>
         private void Start()
         {
-            if (!sfConfig.Get().SyncPrefabs)
+            if (sfConfig.Get().SyncPrefabs == sfConfig.PrefabSyncMode.CREATE_ONLY)
             {
                 sfNewPrefabWatcher.Get().OnNewPrefab += OnNewPrefab;
             }

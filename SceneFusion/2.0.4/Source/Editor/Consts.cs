@@ -35,6 +35,7 @@ namespace KS.SceneFusion2.Unity.Editor
 
         // Config properties
         public const string SyncPrefabs = "#syncPrefabs";
+        public const string SyncMaterials = "#syncMaterials";
 
         // Occlusion properties
         public const string SmallestOccluder = "#smallestOccluder";
