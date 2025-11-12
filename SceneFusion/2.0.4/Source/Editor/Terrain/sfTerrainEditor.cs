@@ -460,7 +460,7 @@ namespace KS.SceneFusion2.Unity.Editor
             m_brushList = ReflectionEditor.GetProperty("brushList").GetValue();
             m_isPlaceTreeWizardOpen = false;
             sfUnityEventDispatcher.Get().OnUpdate += CheckTerrain;
-            SceneView.duringSceneGui += OnSceneGUI;
+            SceneView.duringSceneGui += DrawSceneGUI;
             SceneView.beforeSceneGui += BeforeSceneGUI;
         }
 
@@ -468,7 +468,7 @@ namespace KS.SceneFusion2.Unity.Editor
         private void CleanUp()
         {
             sfUnityEventDispatcher.Get().OnUpdate -= CheckTerrain;
-            SceneView.duringSceneGui -= OnSceneGUI;
+            SceneView.duringSceneGui -= DrawSceneGUI;
             SceneView.beforeSceneGui -= BeforeSceneGUI;
             CheckTerrain(TERRAIN_CHECK_INTERVAL);
 
@@ -563,7 +563,7 @@ namespace KS.SceneFusion2.Unity.Editor
         }
 
         /// <summary>Called when the scene GUI is drawn. Invokes terrain edit events based on user input.</summary>
-        protected override void OnSceneGUI(SceneView sceneView)
+        private void DrawSceneGUI(SceneView sceneView)
         {
             if (m_terrain == null || m_terrain.gameObject.GetComponent<TerrainCollider>() == null)
             {
