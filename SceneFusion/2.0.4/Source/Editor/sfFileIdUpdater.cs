@@ -102,6 +102,8 @@ namespace KS.SceneFusion2.Unity.Editor
             // Add regex to replace the current file id with the new file id.
             m_updater.AddReplacement("\\{fileID: " + currentFileId + "\\}", "{fileID: " + newFileId + "}");
             m_updater.AddReplacement("&" + currentFileId + "(\r\n|\r|\n)", "&" + newFileId + Environment.NewLine);
+            m_updater.AddReplacement("&" + currentFileId + " stripped(\r\n|\r|\n)",
+                "&" + newFileId + " stripped" + Environment.NewLine);
 
             // Store the mapping between the uobject and the new file id.
             m_fileIdToUObject[newFileId] = uobj;

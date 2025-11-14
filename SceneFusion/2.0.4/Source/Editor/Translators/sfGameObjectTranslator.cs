@@ -170,7 +170,6 @@ namespace KS.SceneFusion2.Unity.Editor
             sfUnityEventDispatcher.Get().PreUpdate += PreUpdate;
             sfUnityEventDispatcher.Get().OnUpdate += Update;
             sfUnityEventDispatcher.Get().OnCreate += OnCreateGameObject;
-            sfUnityEventDispatcher.Get().OnCreate += OnCreateGameObject;
             sfUnityEventDispatcher.Get().OnDelete += OnDeleteGameObject;
             sfUnityEventDispatcher.Get().OnCreatePrefabChild += OnCreatePrefabChild;
             sfUnityEventDispatcher.Get().OnAddOrRemoveComponents += OnAddOrRemoveComponents;
@@ -1275,22 +1274,9 @@ namespace KS.SceneFusion2.Unity.Editor
                     }
                 }
 
-                // We don't sync the file ids for prefab variant uobjects because they aren't written in the prefab
-                // file and instead are generated deterministically from the prefab instance handle (the object
-                // containing the prefab overrides) file id and the prefab source. If the uobject was a prefab
-                // variant and no longer is, we need to sync the file ids for the game object and its components.
                 if (PrefabUtility.IsPartOfPrefabAsset(gameObject))
                 {
-                    properties[sfProp.FileId] = sfLoader.Get().GetLocalFileId(gameObject);
-                    foreach (Component component in gameObject.GetComponents<Component>())
-                    {
-                        sfObject componentObj = sfObjectMap.Get().GetSFObject(component);
-                        if (componentObj != null)
-                        {
-                            ((sfDictionaryProperty)componentObj.Property)[sfProp.FileId] = 
-                                sfLoader.Get().GetLocalFileId(component);
-                        }
-                    }
+                    properties.RemoveField(sfProp.PrefabInstanceHandleFileId);
                 }
             }
             else
@@ -1307,30 +1293,12 @@ namespace KS.SceneFusion2.Unity.Editor
                             properties[sfProp.InstanceRevisions] = revisions.ToArray();
                         }
 
-                        // We don't sync the file ids for prefab variants because they aren't written in the prefab file. If
-                        // the object became a prefab variant, remove the file ids from the game object and its components,
-                        // and sync the prefab instance handle file id that is used to generate the file ids of all uobjects
-                        // in the prefab variant.
-                        if (PrefabUtility.IsPartOfPrefabAsset(prefab) && string.IsNullOrEmpty(currentPath))
+                        if (PrefabUtility.IsPartOfPrefabAsset(prefab) && string.IsNullOrEmpty(currentPath) &&
+                            prefab.transform.parent == null)
                         {
-                            if (prefab.transform.parent == null)
-                            {
-                                // Sync the prefab instance handle file id on the root of the prefab variant.
-                                UObject prefabHandle = PrefabUtility.GetPrefabInstanceHandle(gameObject);
-                                properties[sfProp.FileId] = sfLoader.Get().GetLocalFileId(prefabHandle);
-                            }
-                            else
-                            {
-                                properties.RemoveField(sfProp.FileId);
-                            }
-                            foreach (Component component in gameObject.GetComponents<Component>())
-                            {
-                                sfObject componentObj = sfObjectMap.Get().GetSFObject(component);
-                                if (componentObj != null)
-                                {
-                                    ((sfDictionaryProperty)componentObj.Property).RemoveField(sfProp.FileId);
-                                }
-                            }
+                            // Sync the prefab instance handle file id on the root of the prefab variant.
+                            UObject prefabHandle = PrefabUtility.GetPrefabInstanceHandle(gameObject);
+                            properties[sfProp.PrefabInstanceHandleFileId] = sfLoader.Get().GetLocalFileId(prefabHandle);
                         }
                     }
                 }
@@ -2240,15 +2208,11 @@ namespace KS.SceneFusion2.Unity.Editor
                 {
                     properties[sfProp.Path] = AssetDatabase.GetAssetPath(gameObject);
                 }
-
-                if (!PrefabUtility.IsPartOfPrefabInstance(gameObject))
-                {
-                    properties[sfProp.FileId] = sfLoader.Get().GetLocalFileId(gameObject);
-                }
-                else if (PrefabUtility.IsOutermostPrefabInstanceRoot(gameObject))
+                properties[sfProp.FileId] = sfLoader.Get().GetLocalFileId(gameObject);
+                if (PrefabUtility.IsOutermostPrefabInstanceRoot(gameObject))
                 {
                     UObject handle = PrefabUtility.GetPrefabInstanceHandle(gameObject);
-                    properties[sfProp.FileId] = sfLoader.Get().GetLocalFileId(handle);
+                    properties[sfProp.PrefabInstanceHandleFileId] = sfLoader.Get().GetLocalFileId(handle);
                 }
             }
             else
@@ -2739,6 +2703,7 @@ namespace KS.SceneFusion2.Unity.Editor
             Guid guid = Guid.Empty;
             GameObject gameObject = null;
             bool isPrefabAsset = false;
+            bool foundByFileId = false;
             long fileId = 0;
             if (obj.Parent == null)
             {
@@ -2783,8 +2748,8 @@ namespace KS.SceneFusion2.Unity.Editor
                     if (properties.TryGetField(sfProp.FileId, out prop))
                     {
                         fileId = (long)prop;
-                        gameObject = FindPrefabChild(obj.Parent, fileId, string.IsNullOrEmpty(prefabPath) ? 
-                            FileIdTarget.PREFAB_ASSET : FileIdTarget.PREFAB_INSTANCE_HANDLE);
+                        gameObject = FindPrefabChild(obj.Parent, fileId, FileIdTarget.PREFAB_ASSET);
+                        foundByFileId = gameObject != null;
                     }
                 }
             }
@@ -2990,27 +2955,28 @@ namespace KS.SceneFusion2.Unity.Editor
 
             sfPropertyManager.Get().ApplyProperties(gameObject, properties);
 
-            // Set the local file id if the game object is a new object in a prefab asset or the root of a prefab
-            // asset.
-            if ((isNewObject || obj.Parent == null) && isPrefabAsset && fileId != 0)
+            // Set the local file id if the game object is in a prefab asset and we did not find it by its file id.
+            if (!foundByFileId && isPrefabAsset && fileId != 0)
             {
                 sfFileIdUpdater updater = sfFileIdUpdater.Get(gameObject);
                 if (updater != null)
                 {
                     // If the game object is a prefab variant, it has a prefab instance handle that stores all the
-                    // prefab overrides. Set the file id of the prefab instance handle, as it determines the ids of all
-                    // other uobjects in the prefab variant, which are not written in the prefab file.
-                    UObject prefabHandle = PrefabUtility.GetPrefabInstanceHandle(gameObject);
-                    if (prefabHandle != null)
+                    // prefab overrides. Set the file id of the prefab instance handle, as it determines the ids of most
+                    // other uobjects in the prefab variant, which are not written in the prefab file. A known exception
+                    // is prefab variant children with added component overrides have file ids written in the prefab file
+                    // which are not determined by the prefab instance handle.
+                    if (PrefabUtility.IsOutermostPrefabInstanceRoot(gameObject))
                     {
-                        updater.SetFileId(prefabHandle, fileId,
-                            (UObject oldUObj, UObject newUObj) => ReplacePrefabInstanceHandle(obj, newUObj)
-                        );
+                        UObject prefabHandle = PrefabUtility.GetPrefabInstanceHandle(gameObject);
+                        if (prefabHandle != null)
+                        {
+                            updater.SetFileId(prefabHandle, (long)properties[sfProp.PrefabInstanceHandleFileId],
+                                (UObject oldUObj, UObject newUObj) => ReplacePrefabInstanceHandle(obj, newUObj)
+                            );
+                        }
                     }
-                    else
-                    {
-                        updater.SetFileId(gameObject, fileId);
-                    }
+                    updater.SetFileId(gameObject, fileId);
                 }
             }
 
