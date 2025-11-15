@@ -548,8 +548,8 @@ namespace KS.SceneFusion2.Unity.Editor
         /// <summary>Draws a message saying terrain editing is disabled and displays an upgrade link.</summary>
         private void DrawDisabledInspectorGUI()
         {
-            ksStyle.HelpBox(MessageType.Info, "Terrain editing is not enabled for your account. ", null,
-                "Upgrade to enable terrain editing.", sfConfig.Get().Urls.Upgrade);
+            ksStyle.HelpBoxLink(MessageType.Info, "Terrain editing is not enabled for your account. " +
+                "<a>Upgrade to enable terrain editing.</a>", sfConfig.Get().Urls.Upgrade);
         }
 
         /// <summary>Records the event type before it is changed to USED in the OnSceneGUI event handlers.</summary>

@@ -126,11 +126,10 @@ namespace KS.SceneFusion2.Unity.Editor
             base.OnHeaderGUI();
             if (lockedPrefabs && !sfPrefabLocker.Get().AllowSavingPrefabs)
             {
-                if (ksStyle.HelpBox(MessageType.Info,
+                if (ksStyle.HelpBoxLink(MessageType.Info,
                     "Prefab editing during a Scene Fusion session is not allowed when prefab syncing is disabled. " +
-                    "To enable prefab syncing, end the session, open the ", null,
-                    "Scene Fusion settings", "",
-                    ", set 'Sync Prefabs' to 'Full (Experimental)' and start a new session.", null) >= 0)
+                    "To enable prefab syncing, end the session, open the <a>Scene Fusion settings</a>, " +
+                    "set 'Sync Prefabs' to 'Full (Experimental)' and start a new session."))
                 {
                     sfInitializer.OpenSettings();
                 }
@@ -143,7 +142,7 @@ namespace KS.SceneFusion2.Unity.Editor
         /// Iterates the targets looking for prefabs and locks them if their sfObject is locked or if 
         /// <see cref="sfPrefabLocker.AllowSavingPrefabs"/> is false. Prefabs assets will be unlocked after the
         /// inspector is drawn.
-        /// </summary>
+        /// </summary>S
         /// <returns>True if any of the targets were locked prefabs</returns>
         private bool LockPrefabs()
         {

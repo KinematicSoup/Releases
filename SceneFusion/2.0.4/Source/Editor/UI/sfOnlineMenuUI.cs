@@ -42,7 +42,7 @@ namespace KS.SceneFusion2.Unity.Editor
             {
                 string message = m_notificationCount == 1 ?
                     "1 notification" : (m_notificationCount + " notifications");
-                if (ksStyle.HelpBox(MessageType.Warning, message, "") != -1)
+                if (ksStyle.HelpBoxLink(MessageType.Warning, "<a>" + message + "</a>"))
                 {
                     sfNotificationWindow.Open();
                 }
@@ -50,8 +50,8 @@ namespace KS.SceneFusion2.Unity.Editor
 
             if (m_gameObjectCount >= m_gameObjectLimit)
             {
-                ksStyle.HelpBox(MessageType.Warning, "You cannot create more game objects because you reached the " +
-                    m_gameObjectLimit + " game object limit. ", null, "Click here to upgrade.",
+                ksStyle.HelpBoxLink(MessageType.Warning, "You cannot create more game objects because you reached the " +
+                    m_gameObjectLimit + " game object limit. <a>Click here to upgrade.</a>",
                     sfConfig.Get().Urls.Upgrade);
             }
 
