@@ -1,0 +1,21 @@
+{
+    "name":  "com.kinematicsoup.scenefusion2",
+    "version":  "2.0.4",
+    "unity":  "2022.3",
+    "displayName":  "Scene Fusion 2",
+    "description":  "Use Scene Fusion to sync and edit scene files with other developers in real time.",
+    "keywords":  [
+                     "SceneFusion",
+                     "Collaborate",
+                     "Syncing",
+                     "Editing"
+                 ],
+    "author":  {
+                   "name":  "KinematicSoup Technologies Inc.",
+                   "email":  "support@kinematicsoup.com",
+                   "url":  "https://kinematicsoup.com/"
+               },
+    "documentationUrl":  "https://docs.kinematicsoup.com/SceneFusion/",
+    "licensesUrl":  "https://kinematicsoup.com/terms",
+    "hideInEditor":  false
+}
