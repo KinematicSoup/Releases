@@ -223,7 +223,7 @@ namespace KS.Reactor.Client.Unity.Editor
                     osExt = "-osx.zip";
                 }
 
-                string serverFile = $"ReactorServer-{ksReactor.Version.ToString(false)}{osExt}.zip";
+                string serverFile = $"ReactorServer-{ksReactor.Version.ToString(false)}{osExt}";
                 string url = $"{ksReactorConfig.Instance.Urls.Downloads}/localservers/{serverFile}";
                 ksLog.Info($"Downloading Reactor server from {url}");
                 UnityWebRequest www = new UnityWebRequest(url);
