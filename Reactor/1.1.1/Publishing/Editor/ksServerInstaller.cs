@@ -88,15 +88,6 @@ namespace KS.Reactor.Client.Unity.Editor
                         buildFileWarnings += $"Missing build tool file {filepath}\n";
                         missingBuildFiles = true;
                     }
-                    else
-                    {
-                        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(filepath);
-                        if (versionInfo.FileVersion != reactorVersion)
-                        {
-                            versionWarnings += $"{filepath} version mismatch. Expected={reactorVersion}, found={versionInfo.FileVersion}";
-                            versionMismatch = true;
-                        }
-                    }
                 }
             }
 
@@ -123,15 +114,6 @@ namespace KS.Reactor.Client.Unity.Editor
                     {
                         serverFileWarnings += $"Missing server file {filepath}\n";
                         missingServerFiles = true;
-                    }
-                    else
-                    {
-                        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(filepath);
-                        if (versionInfo.FileVersion != reactorVersion)
-                        {
-                            versionWarnings += $"{filepath} version mismatch. Expected={reactorVersion}, found={versionInfo.FileVersion}";
-                            versionMismatch = true;
-                        }
                     }
                 }
             }
@@ -253,7 +235,7 @@ namespace KS.Reactor.Client.Unity.Editor
             }
             catch (Exception ex)
             {
-                ksLog.Error("Exceptaion caught downloading the Reactor server.", ex);
+                ksLog.Error("Exception caught downloading the Reactor server.", ex);
                 return false;
             }
             finally
