@@ -1314,7 +1314,7 @@
             <summary>
             Unzip a file to a destination directory.
             </summary>
-            <param name="zipFile">Path to a zip file.</param>
+            <param name="filePath">Path to a zip file.</param>
             <param name="destDir">Destination directory</param>
         </member>
         <member name="T:KS.Unity.Editor.ksProcessUtils">

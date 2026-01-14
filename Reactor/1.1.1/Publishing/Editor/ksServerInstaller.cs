@@ -202,7 +202,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 }
                 else if (Application.platform == RuntimePlatform.OSXEditor)
                 {
-                    osExt = "-osx.zip";
+                    osExt = "-osx.tar.gz";
                 }
 
                 string serverFile = $"ReactorServer-{ksReactor.Version.ToString(false)}{osExt}";
@@ -224,7 +224,7 @@ namespace KS.Reactor.Client.Unity.Editor
 
                 if (string.IsNullOrEmpty(www.error))
                 {
-                    return Install(www.downloadHandler.data);
+                    return Install(www.downloadHandler.data, serverFile);
                 }
                 else
                 {
@@ -245,9 +245,10 @@ namespace KS.Reactor.Client.Unity.Editor
         }
 
         /// <summary>Install a downloaded server.</summary>
-        /// <param name="data"></param>
+        /// <param name="downloadedData">Array of downloaded data.</param>
+        /// <param name="serverFile">File to write the data to.</param>
         /// <returns></returns>
-        private static bool Install(byte[] downloadedData)
+        private static bool Install(byte[] downloadedData, string serverFile)
         {
             EditorUtility.DisplayProgressBar("Installing Reactor Test Server", "Installing server...", 0.5f);
             try
@@ -271,15 +272,27 @@ namespace KS.Reactor.Client.Unity.Editor
                     File.Delete(tempFile);
                 }
 
-                // Remove the old server directory
+                // Remove the old server files
                 if (Directory.Exists(serverFolder))
                 {
-                    Directory.Delete(serverFolder, true);
+                    DirectoryInfo di = new DirectoryInfo(serverFolder);
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                    foreach (DirectoryInfo dir in di.GetDirectories())
+                    {
+                        dir.Delete();
+                    }
+                }
+                else
+                {
+                    ksPathUtils.Create(serverFolder, true);
                 }
 
                 // Save and then extract the server zip file.
                 File.WriteAllBytes(tempFile, downloadedData);
-                ksPathUtils.Unzip(tempFile, serverFolder);
+                ksPathUtils.Unzip(tempFile, ksPaths.External);
                 return true;
             }
             catch (Exception ex)
