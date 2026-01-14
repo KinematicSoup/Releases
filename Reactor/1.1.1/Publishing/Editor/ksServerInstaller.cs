@@ -282,7 +282,7 @@ namespace KS.Reactor.Client.Unity.Editor
                     }
                     foreach (DirectoryInfo dir in di.GetDirectories())
                     {
-                        dir.Delete();
+                        dir.Delete(true);
                     }
                 }
                 else
