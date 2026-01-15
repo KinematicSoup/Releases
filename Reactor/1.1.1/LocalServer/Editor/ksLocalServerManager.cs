@@ -276,6 +276,10 @@ namespace KS.Reactor.Client.Unity.Editor
         private void OnCreateFile(object sender, FileSystemEventArgs e)
         {
             string path = ksPathUtils.Clean(e.FullPath);
+            if (!File.Exists(path))
+            {
+                return;
+            }
             string logFile = path.Substring(0, path.Length - 5); // Remove ".lock"
             ksLocalServer server = null;
             Servers.Iterate((ksLocalServer s) =>
