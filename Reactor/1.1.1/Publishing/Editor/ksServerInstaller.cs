@@ -264,7 +264,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 ksPathUtils.Create(ksPaths.External, true);
                 // Do not use ksPaths.ServerDir as that can return an override directory we do not want to touch
                 string serverFolder = ksPaths.External + "server/";
-                string tempFile = ksPaths.External + "ReactorServer.zip";
+                string tempFile = ksPaths.External + serverFile;
 
                 // Delete the old server file
                 if (File.Exists(tempFile))
