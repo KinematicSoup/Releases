@@ -457,13 +457,20 @@ namespace KS.Reactor.Client.Unity
                 {
                     m_unityCharacterController.enabled = false;
                 }
-                m_gameObject.transform.position = Transform.Position;
+                if ((flags & ksReadOnlyTransformState.DirtyFlag.ROTATION) != 0)
+                {
+                    m_gameObject.transform.SetPositionAndRotation(Transform.Position, Transform.Rotation);
+                }
+                else
+                {
+                    m_gameObject.transform.position = Transform.Position;
+                }
                 if (m_unityCharacterController != null)
                 {
                     m_unityCharacterController.enabled = true;
                 }
             }
-            if ((flags & ksReadOnlyTransformState.DirtyFlag.ROTATION) != 0)
+            else if ((flags & ksReadOnlyTransformState.DirtyFlag.ROTATION) != 0)
             {
                 m_gameObject.transform.rotation = Transform.Rotation;
             }
