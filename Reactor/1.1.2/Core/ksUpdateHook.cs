@@ -12,7 +12,7 @@ or copyright law. Dissemination of this information or reproduction of this
 material is strictly forbidden unless prior written permission is obtained from
 KinematicSoup Technologies Incorporated.
 */
-
+using System;
 using UnityEngine;
 
 namespace KS.Reactor.Client.Unity
@@ -22,6 +22,7 @@ namespace KS.Reactor.Client.Unity
     /// Used by <see cref="ksReactor"/> to call events on non-Unity objects.
     /// </summary>
     [AddComponentMenu(ksMenuNames.HIDDEN)]
+    [Obsolete]
     public class ksUpdateHook : MonoBehaviour
     {
         /// <summary>Void delegate used for OnQuit events.</summary>

@@ -27,6 +27,7 @@ namespace KS.Reactor.Client.Unity
     /// Used by <see cref="ksReactor"/> to call events on non-Unity objects.
     /// </summary>
     [AddComponentMenu(ksMenuNames.HIDDEN)]
+    [Obsolete]
     public class ksLateUpdateHook : MonoBehaviour
     {
         /// <summary>Invoked from Unity's LateUpdate.</summary>

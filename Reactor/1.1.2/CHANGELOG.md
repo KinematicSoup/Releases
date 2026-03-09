@@ -4,7 +4,7 @@
 
 ### Added
 - Reactor Getting Started screen
-- Added ksVector2Int and ksVector3Int structs to the Reactor server code.
+- Added ksVector2Int and ksVector3Int with implicit conversions to and from Unity Vector2Int and Vector3Int structs.
 - Added integer vector support to ksMultitypes used in Room/Entity/Player properties and RPCs.
 
 ### Changed

@@ -137,7 +137,7 @@ namespace KS.Reactor.Client.Unity
         /// <param name="authArgs">Room authentication arguments.</param>
         public void Connect(ksPlayerAPI.Session session, params ksMultiType[] authArgs)
         {
-            if (!Application.isPlaying || ksReactor.IsQuitting)
+            if (!Application.isPlaying)
             {
                 ksLog.Warning(this, "You can only connect to a room while the game is playing.");
                 return;
@@ -152,7 +152,7 @@ namespace KS.Reactor.Client.Unity
         /// <param name="authArgs">Room authentication arguments.</param>
         public void Connect(params ksMultiType[] authArgs)
         {
-            if (!Application.isPlaying || ksReactor.IsQuitting)
+            if (!Application.isPlaying)
             {
                 ksLog.Warning(this, "You can only connect to a room while the game is playing.");
                 return;

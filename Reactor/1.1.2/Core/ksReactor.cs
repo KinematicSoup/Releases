@@ -20,6 +20,8 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.LowLevel;
+using UnityEngine.PlayerLoop;
 
 [assembly: InternalsVisibleTo("KinematicSoup.Reactor.Editor")]
 [assembly: InternalsVisibleTo("ReactorUnitTests")]
@@ -33,6 +35,12 @@ namespace KS.Reactor.Client.Unity
     /// </summary>
     public class ksReactor
     {
+        /// <summary>Empty class to identify the ReactorUpdate player loop system.</summary>
+        private class ReactorUpdate { }
+
+        /// <summary>Empty class to identify the ReactorPostUpdate player loop system.</summary>
+        private class ReactorPostUpdate { }
+
         private const string LOG_CHANNEL = "KS.Unity.ksReactor";
         private const string ASSET_DATA_FILE = "ksAssets";
 
@@ -64,10 +72,13 @@ namespace KS.Reactor.Client.Unity
         private static ksPrefabCache m_prefabCache;
         private static ksAssetLoader m_assetLoader;
         private static Dictionary<string, AssetBundle> m_assetBundles = new Dictionary<string, AssetBundle>();
-        private static GameObject m_hookObject;
         private static Dictionary<int, ksEntityLinker> m_entityLinkers = new Dictionary<int, ksEntityLinker>();
-        private static bool m_isQuitting = false;
-        private static int m_connectedRoomCount = 0;
+
+        // Number of connected or connecting rooms on the last frame. When setting Application.runInBackground to false
+        // because there are connected or connecting rooms, we log an info message if there were no connected or
+        // connecting rooms last frame, otherwise we log a warning.
+        private static int m_lastRoomCount;
+        private static Assembly m_commonAssembly;// KSCommon assembly
 
         /// <summary>Get the Reactor service.</summary>
         public static ksService Service
@@ -90,14 +101,12 @@ namespace KS.Reactor.Client.Unity
             get { return ksReactorConfig.Instance.Version; }
         }
 
-        /// <summary>
-        /// Is the client game application about to quit? Returns true when leaving play mode in the editor.
-        /// </summary>
+        [Obsolete]
         public static bool IsQuitting
         {
             get
             {
-                return Application.isPlaying && m_isQuitting;
+                throw new NotImplementedException();
             }
         }
 
@@ -198,7 +207,15 @@ namespace KS.Reactor.Client.Unity
             {
                 ksService.AppDataPath = Application.persistentDataPath;// This makes the path work on Android
                 m_service = new ksService();
-                Assembly assembly = LoadReflectionData();
+                if (m_commonAssembly == null)
+                {
+                    m_commonAssembly = LoadReflectionData();
+
+                    // Set the valid types all RPC methods owner must be a subclass of
+                    ksRPCManager<ksRPCAttribute>.Instance.SetValidSubclasses(typeof(ksRoomScript), typeof(ksEntityScript));
+
+                    InitializePlayerLoop();
+                }
 
                 // Initialize player API
                 ksReactorConfig config = ksReactorConfig.Instance;
@@ -207,20 +224,18 @@ namespace KS.Reactor.Client.Unity
                     m_service.PlayerAPI.Initialize(config.Urls.PlayerAPI, config.Build.APIKey, config.Build.APIClientSecret);
                 }
 
-                // Set the valid types all RPC methods owner must be a subclass of
-                ksRPCManager<ksRPCAttribute>.Instance.SetValidSubclasses(typeof(ksRoomScript), typeof(ksEntityScript));
-
                 // Initialize the input manager.
                 m_inputManager = new ksInputManager();
                 m_service.InputManager = m_inputManager;
 
                 // Initialize prefab cache and asset loader.
                 m_prefabCache = new ksPrefabCache(m_assetBundles);
-                m_assetLoader = new ksAssetLoader(m_assetBundles, assembly);
+                m_assetLoader = new ksAssetLoader(m_assetBundles, m_commonAssembly);
                 ksScriptAsset.Assets = m_assetLoader;
                 // Load asset data from Resources.
                 RegisterResourceAssets();
 
+                Application.quitting += HandleQuit;
                 SceneManager.sceneUnloaded += CleanupScene;
 
                 // Set the converging input predictor's calculator delegates.
@@ -241,11 +256,6 @@ namespace KS.Reactor.Client.Unity
                 ksWSConnection.Register();
 #endif
 #endif
-            }
-
-            if (m_hookObject == null)
-            {
-                SetUnityCallBacks();
             }
         }
 
@@ -295,23 +305,10 @@ namespace KS.Reactor.Client.Unity
             }
         }
 
-        /// <summary>Increments the connected room count. If this is the first room connection, sets 
-        /// <see cref="Application.runInBackground"/> to true. Invokes the <see cref="OnRoomConnect"/> event.
-        /// </summary>
+        /// <summary>Invokes the <see cref="OnRoomConnect"/> event.</summary>
         /// <param name="room">Room the was connected to.</param>
         internal static void HandleRoomConnect(ksRoom room)
         {
-            if (m_connectedRoomCount == 0)
-            {
-                if (!Application.runInBackground)
-                {
-                    Application.runInBackground = true;
-                    ksLog.Info(LOG_CHANNEL,"Setting Application.runInBackground to true. " +
-                        "You may set it back to false after disconnecting.");
-                }
-            }
-            m_connectedRoomCount++;
-
             if (OnRoomConnect != null)
             {
                 try
@@ -325,12 +322,10 @@ namespace KS.Reactor.Client.Unity
             }
         }
 
-        /// <summary>Decrements the connected room count. Invokes the <see cref="OnRoomDisconnect"/> event.</summary>
+        /// <summary>Invokes the <see cref="OnRoomDisconnect"/> event.</summary>
         /// <param name="room">Room the was connected to.</param>
         internal static void HandleRoomDisconnect(ksRoom room)
         {
-            m_connectedRoomCount--;
-
             if (OnRoomDisconnect != null)
             {
                 try
@@ -415,25 +410,75 @@ namespace KS.Reactor.Client.Unity
             }
         }
 
-        /// <summary>Sets Unity engine hooks.</summary>
-        private static void SetUnityCallBacks()
+        /// <summary>
+        /// Adds ReactorUpdate and ReactorPostUpdate player loop systems to the current player loop. ReactorUpdate is
+        /// added after PreUpdate and runs before all scripts update, and PostUpdate is added after PreLateUpdate and
+        /// runs after LateUpdate is called on all scripts.
+        /// </summary>
+        private static void InitializePlayerLoop()
         {
-            m_hookObject = new GameObject();
-            m_hookObject.name = "ksReactor";
-            UnityEngine.Object.DontDestroyOnLoad(m_hookObject);
-            ksUpdateHook hook = m_hookObject.AddComponent<ksUpdateHook>();
-            hook.OnUpdate = Update;
-            hook.OnQuit = OnQuit;
-            ksLateUpdateHook lateHook = m_hookObject.AddComponent<ksLateUpdateHook>();
-            lateHook.OnLateUpdate = PostUpdate;
+            PlayerLoopSystem loopSystem = PlayerLoop.GetCurrentPlayerLoop();
+            if (loopSystem.subSystemList == null)
+            {
+                ksLog.Warning(LOG_CHANNEL, "Could not insert Reactor Update systems into player loop because the sub " +
+                    "system list is null. You will need to manually call Update and PostUpdate on ksReactor.Service.");
+                return;
+            }
+            bool insertedUpdate = false;
+            bool insertedPostUpdate = false;
+            
+            // Copy the existing sybsystems into the list, inserting ours after PreUpdate and PreLateUpdate.
+            List<PlayerLoopSystem> subSystems = new List<PlayerLoopSystem>();
+            for (int i = 0; i < loopSystem.subSystemList.Length; i++)
+            {
+                PlayerLoopSystem subSystem = loopSystem.subSystemList[i];
+                subSystems.Add(subSystem);
+                if (subSystem.type == typeof(PreUpdate))
+                {
+                    subSystems.Add(new PlayerLoopSystem()
+                    {
+                        type = typeof(ReactorUpdate),
+                        updateDelegate = Update
+                    });
+                    insertedUpdate = true;
+                }
+                // LateUpdate and DOTS PresentationGroup update actually happen at the end of PreLateUpdate, so we
+                // insert our PostUpdate after PreLateUpdate.
+                else if (subSystem.type == typeof(PreLateUpdate))
+                {
+                    subSystems.Add(new PlayerLoopSystem()
+                    {
+                        type = typeof(ReactorPostUpdate),
+                        updateDelegate = PostUpdate
+                    });
+                    insertedPostUpdate = true;
+                }
+            }
+            if (insertedUpdate || insertedPostUpdate)
+            {
+                loopSystem.subSystemList = subSystems.ToArray();
+                PlayerLoop.SetPlayerLoop(loopSystem);
+            }
+            if (!insertedUpdate)
+            {
+                ksLog.Warning(LOG_CHANNEL, "Could not find PreUpdate subsystem in player loop. " +
+                    "You will need to manually call Update on ksReactor.Service.");
+            }
+            if (!insertedPostUpdate)
+            {
+                ksLog.Warning(LOG_CHANNEL, "Could not find PreLateUpdate subsystem in player loop. " +
+                    "You will need to manually call PostUpdate on ksReactor.Service.");
+            }
         }
 
         /// <summary>Update the input manager and all connected rooms.</summary>
-        /// <param name="realDeltaTime">Real time in seconds since the last update.</param>
-        private static void Update(float realDeltaTime)
+        private static void Update()
         {
-            // Because we are not using a fixed timestep, pass the same time delta for simulation time and real time.
-            m_service.Update(realDeltaTime, realDeltaTime);
+            if (Application.isPlaying)
+            {
+                // Because we are not using a fixed timestep, pass the same time delta for simulation time and real time.
+                m_service.Update(Time.unscaledDeltaTime, Time.unscaledDeltaTime);
+            }
         }
 
         /// <summary>
@@ -442,40 +487,53 @@ namespace KS.Reactor.Client.Unity
         /// </summary>
         private static void PostUpdate()
         {
-            if (m_connectedRoomCount > 0 && !Application.runInBackground)
+            if (Application.isPlaying)
             {
-                Application.runInBackground = true;
-                ksLog.Warning(LOG_CHANNEL, 
-                    "Application.runInBackground cannot be set to false while rooms are connected. " +
-                    "Setting back to true. You may set it to false after disconnecting.");
+                m_service.PostUpdate();
+                if (m_service.Rooms.Count > 0 && !Application.runInBackground)
+                {
+                    Application.runInBackground = true;
+                    if (m_lastRoomCount == 0)
+                    {
+                        ksLog.Info(LOG_CHANNEL, "Setting Application.runInBackground to true. " +
+                            "You may set it back to false after disconnecting.");
+                    }
+                    else
+                    {
+                        ksLog.Warning(LOG_CHANNEL,
+                            "Application.runInBackground cannot be set to false while rooms are connected or connecting. " +
+                            "Setting back to true. You may set it to false after disconnecting.");
+                    }
+                }
+                m_lastRoomCount = m_service.Rooms.Count;
             }
-            m_service.PostUpdate();
         }
 
-        /// <summary>Disconnects all rooms immediately when the Unity application quits.</summary>
-        private static void OnQuit()
+        /// <summary>
+        /// Disconnects all rooms immediately and clears static state when the Unity application quits.
+        /// </summary>
+        private static void HandleQuit()
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChanged;
-#endif
-            m_isQuitting = true;
             m_service.Disconnect(true);
             // We need to call Update to trigger disconnect events.
             m_service.Update(0f);
-        }
 
-#if UNITY_EDITOR
-        /// <summary>Clears the is quitting flag after exitting play mode.</summary>
-        /// <param name="state">Play mode state</param>
-        private static void PlayModeStateChanged(UnityEditor.PlayModeStateChange state)
-        {
-            if (state == UnityEditor.PlayModeStateChange.EnteredEditMode)
-            {
-                m_isQuitting = false;
-                UnityEditor.EditorApplication.playModeStateChanged -= PlayModeStateChanged;
-            }
+            // If domain reloading is disabled for play mode, static state will persist between play mode sessions, so
+            // we need to clear static state. We do not clear m_commonAssembly or any cached reflection data loaded from
+            // that assembly.
+            m_service = null;
+            m_prefabCache = null;
+            m_inputManager = null;
+            m_assetLoader = null;
+            m_assetBundles.Clear();
+            m_entityLinkers.Clear();
+            m_lastRoomCount = 0;
+            ksConvergingInputPredictor.ConfigData.VelocityToleranceCalculator = null;
+            ksConvergingInputPredictor.ConfigData.TunnelDistanceCalculator = null;
+
+            Application.quitting -= HandleQuit;
+            SceneManager.sceneUnloaded -= CleanupScene;
         }
-#endif
 
         /// <summary>Loads reflection data from developer scripts.</summary>
         /// <returns>Common assembly.</returns>

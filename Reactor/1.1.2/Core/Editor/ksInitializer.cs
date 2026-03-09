@@ -104,7 +104,6 @@ namespace KS.Reactor.Client.Unity.Editor
 #endif
 
             ksPublishService.Get().Start();
-            PrioritizeUpdate();
             bool isNewOrUpdate = UpdateVersion();
             new ksIconManager().SetScriptIcons();
             ksServerProjectUpdater.Instance.GenerateMissingAsmDefs();
@@ -154,46 +153,6 @@ namespace KS.Reactor.Client.Unity.Editor
             }
             ksServerProjectUpdater.Instance.UpdateOutputPath();
 
-        }
-
-        /// <summary>
-        /// Sets priority for <see cref="ksUpdateHook"/> to ensure our update loop runs before other scripts, and for
-        /// <see cref="ksLateUpdateHook"/> to ensure it runs after other scripts.
-        /// </summary>
-        private static void PrioritizeUpdate()
-        {
-            string updateName = typeof(ksUpdateHook).Name;
-            string lateUpdateName = typeof(ksLateUpdateHook).Name;
-            int count = 0;
-            foreach (MonoScript monoScript in MonoImporter.GetAllRuntimeMonoScripts())
-            {
-                if (monoScript.name == updateName)
-                {
-                    // without this we will get stuck in an infinite loop
-                    if (MonoImporter.GetExecutionOrder(monoScript) != -1000)
-                    {
-                        MonoImporter.SetExecutionOrder(monoScript, -1000);
-                    }
-                    count++;
-                    if (count == 2)
-                    {
-                        return;
-                    }
-                }
-                else if (monoScript.name == lateUpdateName)
-                {
-                    // without this we will get stuck in an infinite loop
-                    if (MonoImporter.GetExecutionOrder(monoScript) != 1000)
-                    {
-                        MonoImporter.SetExecutionOrder(monoScript, 1000);
-                    }
-                    count++;
-                    if (count == 2)
-                    {
-                        return;
-                    }
-                }
-            }
         }
 
         /// <summary>Updates the project API version number.</summary>
