@@ -88,7 +88,7 @@ namespace KS.Reactor.Client.Unity
                 }
                 catch (Exception ex)
                 {
-                    ksExceptionHandler.Handle("Exception caught invoking OnAttached", ex);
+                    ksExceptionHandler.Handle("Exception caught invoking PreAttachScripts", ex);
                 }
             }
 

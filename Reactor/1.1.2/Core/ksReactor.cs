@@ -101,13 +101,10 @@ namespace KS.Reactor.Client.Unity
             get { return ksReactorConfig.Instance.Version; }
         }
 
-        [Obsolete]
+        /// <summary>Is the application quitting?</summary>
         public static bool IsQuitting
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get { return Application.isPlaying && Service.IsQuitting; }
         }
 
         /// <summary>Access Reactor player web API.</summary>
@@ -479,6 +476,24 @@ namespace KS.Reactor.Client.Unity
                 // Because we are not using a fixed timestep, pass the same time delta for simulation time and real time.
                 m_service.Update(Time.unscaledDeltaTime, Time.unscaledDeltaTime);
             }
+            else if (m_service != null)
+            {
+                // If domain reloading is disabled for play mode, static state will persist between play mode sessions, so
+                // we need to clear static state. We do not clear m_commonAssembly or any cached reflection data loaded from
+                // that assembly.
+                m_service = null;
+                m_prefabCache = null;
+                m_inputManager = null;
+                m_assetLoader = null;
+                m_assetBundles.Clear();
+                m_entityLinkers.Clear();
+                m_lastRoomCount = 0;
+                ksConvergingInputPredictor.ConfigData.VelocityToleranceCalculator = null;
+                ksConvergingInputPredictor.ConfigData.TunnelDistanceCalculator = null;
+
+                Application.quitting -= HandleQuit;
+                SceneManager.sceneUnloaded -= CleanupScene;
+            }
         }
 
         /// <summary>
@@ -514,25 +529,10 @@ namespace KS.Reactor.Client.Unity
         /// </summary>
         private static void HandleQuit()
         {
+            m_service.IsQuitting = true;
             m_service.Disconnect(true);
             // We need to call Update to trigger disconnect events.
             m_service.Update(0f);
-
-            // If domain reloading is disabled for play mode, static state will persist between play mode sessions, so
-            // we need to clear static state. We do not clear m_commonAssembly or any cached reflection data loaded from
-            // that assembly.
-            m_service = null;
-            m_prefabCache = null;
-            m_inputManager = null;
-            m_assetLoader = null;
-            m_assetBundles.Clear();
-            m_entityLinkers.Clear();
-            m_lastRoomCount = 0;
-            ksConvergingInputPredictor.ConfigData.VelocityToleranceCalculator = null;
-            ksConvergingInputPredictor.ConfigData.TunnelDistanceCalculator = null;
-
-            Application.quitting -= HandleQuit;
-            SceneManager.sceneUnloaded -= CleanupScene;
         }
 
         /// <summary>Loads reflection data from developer scripts.</summary>

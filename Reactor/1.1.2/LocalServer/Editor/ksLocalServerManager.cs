@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEditor;
 using KS.Unity.Editor;
 
 namespace KS.Reactor.Client.Unity.Editor
@@ -60,6 +61,24 @@ namespace KS.Reactor.Client.Unity.Editor
         }
 
         private ksAtomicDictionary<string, ksLocalServer> m_serverMap = new ksAtomicDictionary<string, ksLocalServer>();
+
+        /// <summary>Constructor</summary>
+        internal ksLocalServerManager()
+        {
+            EditorApplication.quitting += HandleQuit;
+        }
+
+        /// <summary>
+        /// Called when the Unity editor is quitting. Stops running local servers if
+        /// <see cref="ksReactorConfig.ServerConfigs.StopLocalServersWhenEditorExits"/> is true.
+        /// </summary>
+        private void HandleQuit()
+        {
+            if (ksReactorConfig.Instance.Server.StopLocalServersWhenEditorExits)
+            {
+                StopServers();
+            }
+        }
 
         /// <summary>Loads running local server instances.</summary>
         /// <param name="data">Local server instances data to load.</param>

@@ -4457,6 +4457,9 @@
         <member name="P:KS.Reactor.Client.ksService.Rooms">
             <summary>List of rooms we are connected or connecting to.</summary>
         </member>
+        <member name="P:KS.Reactor.Client.ksService.IsQuitting">
+            <summary>Is the application quitting? Prevents new room connections when true.</summary>
+        </member>
         <member name="M:KS.Reactor.Client.ksService.#ctor">
             <summary>Constructor</summary>
         </member>

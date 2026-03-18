@@ -100,6 +100,12 @@ namespace KS.Reactor.Client.Unity
             /// </summary>
             [Tooltip("Check local server installation and request downloads when updates are needed.")]
             public bool CheckServerFiles = true;
+
+            /// <summary>
+            /// When true, stops local servers started from the editor when the editor is closed.
+            /// </summary>
+            [Tooltip("Stop local servers started from the editor when the editor is closed.")]
+            public bool StopLocalServersWhenEditorExits = true;
         };
 
         /// <summary>Build settings.</summary>
@@ -153,6 +159,8 @@ namespace KS.Reactor.Client.Unity
 
 #if KS_DEVELOPMENT
         [SerializeField]
+#else
+        [NonSerialized] // Needed the prevent serialization during domain reloads.
 #endif
         private ksSerializableVersion m_version = new ksVersion(1, 1, 2, 0);  // Reactor 1.1.2-0
 

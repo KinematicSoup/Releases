@@ -62,13 +62,13 @@ namespace KS.Reactor.Client.Unity.Editor
         private HashSet<string> m_ignoredFiles = new HashSet<string>();
         private ksServerScriptCompiler m_compiler = ksServerScriptCompiler.Instance;
 
-        /// <summary>Was the server project modified?</summary>
-        public bool ServerProjectDirty
+        /// <summary>Was the server project modified since the last server project build?</summary>
+        public bool RequiresServerBuild
         {
-            get { return m_serverProjectDirty; }
-            set { m_serverProjectDirty = value; }
+            get { return m_requiresServerBuild; }
+            set { m_requiresServerBuild = value; }
         }
-        private bool m_serverProjectDirty = false;
+        private bool m_requiresServerBuild = false;
 
         /// <summary>
         /// Begins monitoring the server runtime project. Builds the server project if Unity just started up.
@@ -155,7 +155,7 @@ namespace KS.Reactor.Client.Unity.Editor
             {
                 if (!ksReactorConfig.Instance.Server.AutoRebuildServerRuntime)
                 {
-                    m_serverProjectDirty = true;
+                    m_requiresServerBuild = true;
                     if (path.EndsWith(".dll"))
                     {
                         ksServerProjectUpdater.Instance.UpdateAsmDefPrecompiledReferences();

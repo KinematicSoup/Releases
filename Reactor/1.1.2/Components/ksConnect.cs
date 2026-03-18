@@ -65,6 +65,8 @@ namespace KS.Reactor.Client.Unity
         {
             /// <summary><see cref="ksConnect"/> instance which generated the event.</summary>
             public ksConnect Caller;
+            /// <summary>Room that generated the event.</summary>
+            public ksRoom Room;
             /// <summary>Event status</summary>
             public ksBaseRoom.ConnectStatus Status;
             /// <summary>Authentication result from user-defined authentication handlers.</summary>
@@ -83,6 +85,8 @@ namespace KS.Reactor.Client.Unity
         {
             /// <summary><see cref="ksConnect"/> instance which generated the event.</summary>
             public ksConnect Caller;
+            /// <summary>Room that generated the event.</summary>
+            public ksRoom Room;
             /// <summary>Event status</summary>
             public ksBaseRoom.ConnectStatus Status;
         }
@@ -119,7 +123,8 @@ namespace KS.Reactor.Client.Unity
         [Tooltip("Event handlers called when disconnected from a room.")]
         public UnityEvent<DisconnectEvent> OnDisconnect = new UnityEvent<DisconnectEvent>();
 
-        [HideInInspector] public ksRoom Room = null;
+        [Obsolete("Get the room from the event handlers instead.")]
+        public ksRoom Room;
 
         /// <summary>Check if the room connection should start automatically.</summary>
         void Start()
@@ -151,19 +156,14 @@ namespace KS.Reactor.Client.Unity
 
         /// <summary>Connect to a room.</summary>
         /// <param name=""roomInfo"">Room connection paremeters.</param>
-        public void Connect(ksRoomInfo roomInfo, params ksMultiType[] connectParams)
+        /// <returns>The room connection.</returns>
+        public ksRoom Connect(ksRoomInfo roomInfo, params ksMultiType[] connectParams)
         {
-            if (Room != null)
-            {
-                return;
-            }
-
-            Room = new ksRoom(roomInfo);
-            Room.OnConnect += HandleConnect;
-            Room.OnDisconnect += HandleDisconnect;
+            ksRoom room = new ksRoom(roomInfo);
+            RegisterConnectDisconnectHandlers(room);
 #if UNITY_WEBGL && !UNITY_EDITOR
             // Reactor WebGL builds only support websocket connections.
-            Room.Protocol = ksConnectionProtocols.WEBSOCKETS;
+            room.Protocol = ksConnectionProtocols.WEBSOCKETS;
             if (ConnectMode == ConnectModes.LOCAL)
             {
                 ksAddress wsAddress = roomInfo.GetAddress(ksConnectionProtocols.WEBSOCKETS);
@@ -174,18 +174,16 @@ namespace KS.Reactor.Client.Unity
                 }
             }
 #else
-            Room.Protocol = (ksConnectionProtocols)ConnectProtocol;
+            room.Protocol = (ksConnectionProtocols)ConnectProtocol;
 #endif
-            Room.Connect(connectParams);
+            room.Connect(connectParams);
+            return room;
         }
 
-        /// <summary> Disconnect from a connected room.</summary>
+        [Obsolete("Call Room.Disconnect instead.")]
         public void Disconnect(bool immediate)
         {
-            if (Room != null)
-            {
-                Room.Disconnect(immediate);
-            }
+            throw new NotImplementedException();
         }
 
         /// <summary>Handle a response to a KSReactor.GetServer request./// </summary>
@@ -221,47 +219,55 @@ namespace KS.Reactor.Client.Unity
             }
         }
 
-        /// <summary>Handle room connection events.</summary>
-        /// <param name=""status"">Connection status.</param>
-        /// <param name="result">Authentication result from user-defined authentication handlers.</param>
-        private void HandleConnect(ksBaseRoom.ConnectStatus status, ksAuthenticationResult result)
+        /// <summary>Register room connect and disconnect handlers</summary>
+        /// <param name="room">Room to register handlers for.</param>
+        private void RegisterConnectDisconnectHandlers(ksRoom room)
         {
-            if (status == ksBaseRoom.ConnectStatus.SUCCESS)
+            room.OnConnect += (ksBaseRoom.ConnectStatus status, ksAuthenticationResult result) =>
             {
-                ksLog.Debug(this, $"Connected to room {Room.Address}");
-                OnConnect.Invoke(new ConnectEvent()
+                if (status == ksBaseRoom.ConnectStatus.SUCCESS)
                 {
-                    Caller = this,
-                    Status = status,
-                    Result = result
-                });
-            }
-            else
-            {
-                ksLog.Warning(this, $"Unable to connect to room {Room.Address}. {status} {result}");
-                OnConnect.Invoke(new ConnectEvent()
+                    ksLog.Debug(this, $"Connected to room {room.Address}");
+                    OnConnect.Invoke(new ConnectEvent()
+                    {
+                        Caller = this,
+                        Room = room,
+                        Status = status,
+                        Result = result
+                    });
+                }
+                else
                 {
-                    Caller = this,
-                    Status = status,
-                    Result = result
-                });
-                Room.CleanUp();
-                Room = null;
-            }
-        }
+                    ksLog.Warning(this, $"Unable to connect to room {room.Address}. {status} {result}");
+                    // Store a reference to the room in case a connect handler connects to a new room.
+                    OnConnect.Invoke(new ConnectEvent()
+                    {
+                        Caller = this,
+                        Room = room,
+                        Status = status,
+                        Result = result
+                    });
+                    if (!room.IsConnected && !room.IsConnecting)
+                    {
+                        room.CleanUp();
+                    }
+                }
+            };
 
-        /// <summary>Handle room disconnect events.</summary>
-        /// <param name=""status"">Disconnect reason.</param>
-        private void HandleDisconnect(ksBaseRoom.ConnectStatus status)
-        {
-            ksLog.Info(this, $"Disconnected from room {Room.Address}. Status = {status}");
-            OnDisconnect.Invoke(new DisconnectEvent()
+            room.OnDisconnect += (ksBaseRoom.ConnectStatus status) =>
             {
-                Caller = this,
-                Status = status
-            });
-            Room.CleanUp();
-            Room = null;
+                ksLog.Info(this, $"Disconnected from room {room.Address}. Status = {status}");
+                OnDisconnect.Invoke(new DisconnectEvent()
+                {
+                    Caller = this,
+                    Room = room,
+                    Status = status
+                });
+                if (!room.IsConnected && !room.IsConnecting)
+                {
+                    room.CleanUp();
+                }
+            };
         }
 
         /// <summary>Get the number of registered event handlers on a unity event object.</summary>

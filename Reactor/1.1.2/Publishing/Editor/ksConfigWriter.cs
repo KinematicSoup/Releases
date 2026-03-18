@@ -703,7 +703,8 @@ namespace KS.Reactor.Client.Unity.Editor
 
                 // Store room objects to be processed in the second pass after entity ids are assigned so references to
                 // entities work properly.
-                if (instance.GetComponent<ksRoomType>() != null)
+                ksRoomType roomType = instance.GetComponent<ksRoomType>();
+                if (roomType != null && roomType.enabled)
                 {
                     roomObjects.Add(instance);
                     continue;
@@ -711,7 +712,7 @@ namespace KS.Reactor.Client.Unity.Editor
 
                 // Only objects with ksEntityComponents are written
                 ksEntityComponent entity = GetSingleComponent<ksEntityComponent>(instance);
-                if (entity == null)
+                if (entity == null || !entity.enabled)
                 {
                     continue;
                 }
@@ -876,7 +877,7 @@ namespace KS.Reactor.Client.Unity.Editor
         {
             UpdateProgressBar(null, " Writing RoomType config for " + gameObject.name);
             ksRoomType roomType = GetSingleComponent<ksRoomType>(gameObject);
-            if (roomType == null)
+            if (roomType == null || !roomType.enabled)
             {
                 return false;
             }
@@ -894,20 +895,12 @@ namespace KS.Reactor.Client.Unity.Editor
                 m_scenePublishing[gameObject.scene.name][gameObject.name] = resources;
             }
 
-            GameObject prefab = GetConfigPrefab(gameObject);
+            // We ignore prefab nesting.
+            GameObject prefab = PrefabUtility.IsPartOfPrefabAsset(gameObject) ? null : GetConfigPrefab(gameObject);
             ksRoomType prefabType = prefab == null ? null : prefab.GetComponent<ksRoomType>();
             if (prefabType == null)
             {
                 prefab = null;
-            }
-            if (prefab != null)
-            {
-                string prefabPath = AssetDatabase.GetAssetPath(prefab);
-                if (!prefabPath.Contains("Resources"))
-                {
-                    prefab = null;
-                    prefabType = null;
-                }
             }
             ksJSON json = new ksJSON(ksJSON.Types.OBJECT);
             if (prefabType != null)
@@ -981,7 +974,14 @@ namespace KS.Reactor.Client.Unity.Editor
                 json["parallel owned entity updates"] = roomType.ParallelOwnedEntityUpdates;
             }
 
-            CreatePhysicsConfig(json, gameObject);
+
+            ksPhysicsSettings physics = GetSingleComponent<ksPhysicsSettings>(gameObject);
+            ksPhysicsSettings prefabPhysics = prefab == null ? null : prefab.GetComponent<ksPhysicsSettings>();
+            ksJSON jsonPhysics = CreatePhysicsConfig(physics, prefabPhysics);
+            if (jsonPhysics.Count > 0 || (jsonPhysics.IsNull && prefabPhysics != null))
+            {
+                json["physics"] = jsonPhysics;
+            }
 
             ksJSON jsonScripts = CreateScripts<ksProxyRoomScript>(gameObject, prefab);
             ksJSON jsonPlayerScripts = CreateScripts<ksProxyPlayerScript>(gameObject, prefab);
@@ -1018,34 +1018,24 @@ namespace KS.Reactor.Client.Unity.Editor
             return true;
         }
 
-        /// <summary>Create and add physics configuration values to the room config.</summary>
-        /// <param name="roomJson">Room configuration JSON</param>
-        /// <param name="gameObject">Room object</param>
-        private void CreatePhysicsConfig(ksJSON roomJson, GameObject gameObject)
+        /// <summary>Create json with physics configuration values.</summary>
+        /// <param name="physics">Physics settings to create json from.</param>
+        /// <param name="prefabPhysics">
+        /// Prefab physics settings. Only values that are different from the prefab will be included.
+        /// </param>
+        /// <returns>Physics json</returns>
+        private ksJSON CreatePhysicsConfig(ksPhysicsSettings physics, ksPhysicsSettings prefabPhysics)
         {
-            ksPhysicsSettings physics = GetSingleComponent<ksPhysicsSettings>(gameObject);
-            if (physics == null)
+            if (physics == null || !physics.enabled)
             {
-                return;
+                return new ksJSON();
+            }
+            if (prefabPhysics != null && !prefabPhysics.enabled)
+            {
+                prefabPhysics = null;
             }
 
-            GameObject prefab = GetConfigPrefab(gameObject);
-            ksPhysicsSettings prefabPhysics = prefab == null ? null : prefab.GetComponent<ksPhysicsSettings>();
-            if (prefabPhysics == null)
-            {
-                prefab = null;
-            }
-            if (prefab != null)
-            {
-                string prefabPath = AssetDatabase.GetAssetPath(prefab);
-                if (!prefabPath.Contains("Resources"))
-                {
-                    prefab = null;
-                    prefabPhysics = null;
-                }
-            }
-            ksJSON json = new ksJSON();
-            roomJson["physics"] = json;
+            ksJSON json = new ksJSON(ksJSON.Types.OBJECT);
 
             // Scene settings
             if (prefabPhysics == null || prefabPhysics.Gravity != physics.Gravity)
@@ -1108,7 +1098,7 @@ namespace KS.Reactor.Client.Unity.Editor
                     json["PVD Port"] = 0;
                 }
             }
-            return;
+            return json;
         }
 
         /// <summary>Creates a JSON config for an entity collection.</summary> 
@@ -1443,7 +1433,8 @@ namespace KS.Reactor.Client.Unity.Editor
                 {
                     if (prefabComponent != null)
                     {
-                        if (scriptName == "" && isPrefabComponent)
+                        // Fill disabled prefab instance scripts with null when scripts are disabled.
+                        if (scriptName == "")
                         {
                             hasScriptData = true;
                             json.Add(null);
@@ -1452,7 +1443,7 @@ namespace KS.Reactor.Client.Unity.Editor
                     }
                     else
                     {
-                        // Fill disabled prefab scripts with null when scripts are disabled.
+                        // Fill disabled prefab asset scripts with null when scripts are disabled.
                         if (!isInstance && scriptName == "")
                         {
                             hasScriptData = true;
@@ -1717,7 +1708,7 @@ namespace KS.Reactor.Client.Unity.Editor
         /// <param name="scriptName">Name of the server script.</param>
         /// <param name="gameObject">Object the component is attached to.</param>
         /// <param name="component">Component to write the script config for.</param>
-        /// <param name="isPrefabComponent">True if the component was defined on a prefab.</param>
+        /// <param name="isPrefabComponent">True if the component is a prefab instance component.</param>
         /// <returns>JSON script configuration for a <see cref="KS.Reactor.Server.ksRigidBody"/>.</returns>
         private ksJSON CreateRigidBodyScript(string scriptName, GameObject gameObject, Component component, bool isPrefabComponent)
         {
@@ -1730,7 +1721,7 @@ namespace KS.Reactor.Client.Unity.Editor
             ksEntityComponent entity = gameObject.GetComponent<ksEntityComponent>();
             ksEntityPhysicsSettings physics = entity.PhysicsOverrides;
 
-            ksEntityComponent defaultEntity = GetConfigPrefab(entity);
+            ksEntityComponent defaultEntity = isPrefabComponent ? GetConfigPrefab(entity) : null;
             ksEntityPhysicsSettings defaultPhysics = defaultEntity != null ? defaultEntity.PhysicsOverrides : null;
 
             if (!isPrefabComponent)

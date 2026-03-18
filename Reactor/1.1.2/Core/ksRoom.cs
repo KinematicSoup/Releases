@@ -117,6 +117,7 @@ namespace KS.Reactor.Client.Unity
 
             if (m_component != null)
             {
+                m_component.Detach();
                 Component.Destroy(m_component);
                 m_component = null;
             }
@@ -256,9 +257,14 @@ namespace KS.Reactor.Client.Unity
             }
             else
             {
-                if (m_roomType.GetComponent<ksRoomComponent>() != null)
+                ksRoomComponent component = m_roomType.GetComponent<ksRoomComponent>();
+                if (component != null && component.Room != null)
                 {
-                    return false;
+                    if (component.Room.IsConnected || component.Room.IsConnecting)
+                    {
+                        return false;
+                    }
+                    component.Room.CleanUp();
                 }
 
                 m_gameObject = m_roomType.gameObject;

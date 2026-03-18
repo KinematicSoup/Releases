@@ -190,6 +190,7 @@ namespace KS.Reactor.Client.Unity.Editor
             {
                 try
                 {
+                    ksServerProjectWatcher.Get().RequiresServerBuild = false;
                     ksBuildEvents.InvokePostBuildServer(m_configuration, m_result == CompileResults.SUCCESS);
                     if (m_result == CompileResults.SUCCESS)
                     {

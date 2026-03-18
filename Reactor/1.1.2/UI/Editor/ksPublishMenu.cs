@@ -151,14 +151,13 @@ namespace KS.Reactor.Client.Unity.Editor
         private void Publish()
         {
             ksConfigWriter configWriter = new ksConfigWriter();
-            if (ksServerProjectWatcher.Get().ServerProjectDirty)
+            if (ksServerProjectWatcher.Get().RequiresServerBuild)
             {
                 // Build the local DLL to regenerate the proxy scripts.
                 if (!configWriter.Build(false, true))
                 {
                     return;
                 }
-                ksServerProjectWatcher.Get().ServerProjectDirty = false;
                 // If Unity is compiling, that means proxy scripts changed and we have to wait for Unity to finish
                 // compiling before we can continue publishing.
                 if (EditorApplication.isCompiling)

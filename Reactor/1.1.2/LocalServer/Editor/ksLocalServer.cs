@@ -212,10 +212,10 @@ namespace KS.Reactor.Client.Unity.Editor
         /// </summary>
         public void CheckServerProjectDirtyFlag()
         {
-            if (ksServerProjectWatcher.Get().ServerProjectDirty &&
+            if (ksServerProjectWatcher.Get().RequiresServerBuild &&
                         EditorUtility.DisplayDialog("Reactor Local Server", RUNTIME_DIRTY_MSG, "Yes", "No"))
             {
-                ksServerProjectWatcher.Get().ServerProjectDirty = !ksReactorMenu.BuildServerRuntime();
+                ksReactorMenu.BuildServerRuntime();
             }
         }
 

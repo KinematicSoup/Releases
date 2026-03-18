@@ -6,14 +6,23 @@
 - Reactor Getting Started screen
 - Added ksVector2Int and ksVector3Int with implicit conversions to and from Unity Vector2Int and Vector3Int structs.
 - Added integer vector support to ksMultitypes used in Room/Entity/Player properties and RPCs.
+- Added "Stop Local Servers When Editor Exits" toggle to the Reactor settings which is enabled by default.
 
 ### Changed
 - Improved network transform updates to apply position and rotation to gameobjects at the same time.
 - Precompiled assemblies changed to .netstandard2.1
 - Improved network decoding performance.
+- ksConnect no longer tracks a single ksRoom instance for its entire lifetime. A Room property is now added to the ksConnect ConnectEvent and DisconnectEvent objects. The ksConnect.Room property is marked as obsolete.
 
 ### Fixed
 - RUDP connection errors when sending messages exceeding 150KB
+- OnConnect is now invoked with an error status when an RUDP connection fails.
+- Fixed a bug where server scripts were sometimes not loaded correctly on room prefab instances when prefab instance scripts had different enabled states then their prefabs.
+- Fixed a bug where default entity physics settings used the wrong values on room prefab instances when the prefab instance had different values than the prefab.
+- Fixed an error message when serializing a ksMultiType.NULL property or RPC argument on the server.
+- Starting a local server when Auto Rebuild Server is unchecked will no longer prompt you to build the server runtime if it is not dirty.
+- Fixed a bug where disconnected player data was synced to connecting players if multiple players disconnected on the same sync frame.
+- Reconnecting on the same frame you disconnect or fail to connect works now and will not get a ROOM_INITIALIZE error.
 
 ## [1.1.1-0] - 2026-01-09
 

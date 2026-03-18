@@ -2927,24 +2927,6 @@
             <summary>Deserializes the id from a buffer.</summary>
             <param name="buffer">Buffer to deserialize from.</param>
         </member>
-        <member name="T:KS.Reactor.ksEntityPhysics">
-            <summary>Properties used by entities which have colliders in the physics system.</summary>
-        </member>
-        <member name="T:KS.Reactor.ksEntityPhysics.DirtyFlags">
-            <summary>Flags used to indicate that a field has changed.</summary>
-        </member>
-        <member name="M:KS.Reactor.ksEntityPhysics.#ctor">
-            <summary>Default constructor.</summary>
-        </member>
-        <member name="M:KS.Reactor.ksEntityPhysics.SetDirty(KS.Reactor.ksEntityPhysics.DirtyFlags)">
-            <summary>Set a dirty flag bit.</summary>
-            <param name="flag">Dirty flag to set.</param>
-        </member>
-        <member name="P:KS.Reactor.ksEntityPhysics.UpdateContacts">
-            <summary>
-            True if we need to generate contact data every frame this entity remains in contact with other entities.
-            </summary>
-        </member>
         <member name="T:KS.Reactor.ksIEvent">
             <summary>Interface for events used with <see cref="T:KS.Reactor.ksEventMap`2"/>.</summary>
         </member>
