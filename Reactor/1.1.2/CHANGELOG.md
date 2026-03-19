@@ -7,6 +7,8 @@
 - Added ksVector2Int and ksVector3Int with implicit conversions to and from Unity Vector2Int and Vector3Int structs.
 - Added integer vector support to ksMultitypes used in Room/Entity/Player properties and RPCs.
 - Added "Stop Local Servers When Editor Exits" toggle to the Reactor settings which is enabled by default.
+- Added ksNetCounters.Types.TX_ENTITY, TX_TRANSFORM, TX_ENTITY_PROPS, and TX_ENTITY_COUNT for tracking transmitted data for owned entities.
+- Added ksRoom.OnSentFrame event that fires after the client sends a frame to the the server.
 
 ### Changed
 - Improved network transform updates to apply position and rotation to gameobjects at the same time.
@@ -23,6 +25,7 @@
 - Starting a local server when Auto Rebuild Server is unchecked will no longer prompt you to build the server runtime if it is not dirty.
 - Fixed a bug where disconnected player data was synced to connecting players if multiple players disconnected on the same sync frame.
 - Reconnecting on the same frame you disconnect or fail to connect works now and will not get a ROOM_INITIALIZE error.
+- ksNetCounters.Types.TX_EVENTS and TX_INPUT track transmitted RPC events and input now instead of always reporting 0.
 
 ## [1.1.1-0] - 2026-01-09
 

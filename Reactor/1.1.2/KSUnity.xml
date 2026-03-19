@@ -1980,6 +1980,9 @@
             server on locally-owned entities with the <see cref="F:KS.Reactor.ksOwnerPermissions.PROPERTIES"/> permission.
             </summary>
         </member>
+        <member name="E:KS.Reactor.Client.ksBaseRoom`2.OnSentFrame">
+            <summary>Invoked after sending a frame of client data to the server.</summary>
+        </member>
         <member name="P:KS.Reactor.Client.ksBaseRoom`2.OnPropertyChange">
             <summary>
             Invoked when a room property changes. Indexed by property id. Other properties are not guaranteed to be
@@ -4142,6 +4145,25 @@
         </member>
         <member name="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_INPUT">
             <summary>Transmit input</summary>
+        </member>
+        <member name="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_ENTITY">
+            <summary>
+            Transmit updates for owned entities. Includes <see cref="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_TRANSFORM"/> and
+            <see cref="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_ENTITY_PROPS"/>.
+            </summary>
+        </member>
+        <member name="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_ENTITY_COUNT">
+            <summary>Number of transmitted updates for owned entities.</summary>
+        </member>
+        <member name="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_TRANSFORM">
+            <summary>
+            Transmit transform updates for owned entities. This in included in <see cref="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_ENTITY"/>.
+            </summary>
+        </member>
+        <member name="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_ENTITY_PROPS">
+            <summary>
+            Transmit property updates for owned entities, This is includedin <see cref="F:KS.Reactor.Client.ksNetCounters.CounterType.TX_ENTITY"/>.
+            </summary>
         </member>
         <member name="M:KS.Reactor.Client.ksNetCounters.Add(KS.Reactor.Client.ksNetCounters.CounterType,System.UInt64)">
             <summary>Add an amount to a specific counter</summary>
@@ -6931,13 +6953,7 @@
             <param name="buffer">Buffer to write to.</param>
             <param name="type">Frame section type</param>
         </member>
-        <member name="M:KS.Reactor.Secret.PacketEncoder.EndFrameSection(KS.Reactor.ksStreamBuffer)">
-            <summary>
-            Writes the length of the frame section body to the frame section header. The length is calculated as the 
-            difference between the current write offset and the end of the current frame section header.
-            </summary>
-            <param name="buffer">Buffer to write to.</param>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:KS.Reactor.Secret.PacketEncoder.EndFrameSection(KS.Reactor.ksStreamBuffer)" -->
         <member name="T:KS.Reactor.Secret.PacketHeader">
             Structure that contains data and enums for the Reactor packet protocol.
         </member>
