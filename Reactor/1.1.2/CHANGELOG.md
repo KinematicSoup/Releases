@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.2-0] - 2026-03-05
+## [1.1.2-0] - 2026-03-19
 
 ### Added
 - Reactor Getting Started screen
