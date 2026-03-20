@@ -1,0 +1,20 @@
+{
+  "name": "com.kinematicsoup.reactor.dots",
+  "version": "0.0.1",  
+  "unity": "2021.3",
+  "displayName": "Reactor Multiplayer For Unity DOTS",
+  "description": "Use Reactor Multiplayer with Unity DOTS to create and host multiplayer game servers.",
+  "keywords": ["Reactor", "Mulitplayer", "Networking", "Server", "Client", "Hosting", "DOTS", "ECS", "Entities"],  
+  "author": {
+    "name": "KinematicSoup Technologies Inc.",
+    "email": "support@kinematicsoup.com",
+    "url": "https://kinematicsoup.com/"
+  },
+  "dependencies": {
+      "com.kinematicsoup.reactor": "1.1.2",
+      "com.unity.entities": "1.4.5"
+  },
+  "documentationUrl": "https://docs.kinematicsoup.com/Reactor/",
+  "licensesUrl": "https://kinematicsoup.com/terms",
+  "hideInEditor": false
+}

@@ -1,0 +1,24 @@
+{
+    "name": "KinematicSoup.Reactor.DOTS",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Entities",
+        "Unity.Entities.Hybrid",
+        "Unity.Collections",
+        "Unity.Transforms",
+        "Unity.Scenes",
+        "Unity.Mathematics",
+        "Unity.Physics",
+        "KinematicSoup.Reactor",
+        "Reactor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
