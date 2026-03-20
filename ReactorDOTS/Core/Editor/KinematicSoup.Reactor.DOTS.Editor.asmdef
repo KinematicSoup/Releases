@@ -1,0 +1,27 @@
+{
+    "name": "KinematicSoup.Reactor.DOTS.Editor",
+    "rootNamespace": "",
+    "references": [
+        "KinematicSoup.Reactor.DOTS",
+        "KinematicSoup.Reactor.Editor",
+        "KinematicSoup.Reactor",
+        "Reactor",
+        "ReactorEditor",
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Entities.Hybrid",
+        "Unity.Physics",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
