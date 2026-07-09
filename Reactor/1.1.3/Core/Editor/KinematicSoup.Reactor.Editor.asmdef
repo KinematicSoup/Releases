@@ -1,0 +1,16 @@
+{
+    "name": "KinematicSoup.Reactor.Editor",
+    "rootNamespace": "",
+    "references": ["KinematicSoup.Reactor"],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": ["KSCommon.dll", "KSCommonReactor.dll", "KSCommon-Editor.dll"],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
