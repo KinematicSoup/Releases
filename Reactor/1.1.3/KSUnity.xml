@@ -2330,6 +2330,11 @@
             <param name="connection">connection that is calling the handler</param>
             <param name="buffer">buffer containing the packet header and body</param>
         </member>
+        <member name="M:KS.Reactor.Client.ksBaseRoom`2.ReceiveUDPAck(KS.Reactor.Client.ksConnection,KS.Reactor.ksStreamBuffer)">
+            <summary>Handle a UDP ack packet.</summary>
+            <param name="connection">connection that is calling the handler</param>
+            <param name="buffer">buffer containing the packet header and body</param>
+        </member>
         <member name="M:KS.Reactor.Client.ksBaseRoom`2.ReceivePong(KS.Reactor.Client.ksConnection,KS.Reactor.ksStreamBuffer)">
             <summary>
             Handles the reception of a pong packet.
@@ -6999,6 +7004,12 @@
             @param   ksStreamBuffer - buffer
             @return  PingResult
         </member>
+        <member name="M:KS.Reactor.Secret.PacketDecoder.DecodeUdpAck(KS.Reactor.ksStreamBuffer)">
+            Decode a UDP ack message and return the UDP frame number.
+            
+            @param   ksStreamBuffer - buffer
+            @return  UDP frame number
+        </member>
         <member name="T:KS.Reactor.Secret.PacketEncoder">
             Handles the encoding of data and the writing of packet headers and bodies to stream buffers.
         </member>
@@ -7042,12 +7053,12 @@
             
             @param   ksStreamBuffer - buffer
         </member>
-        <member name="M:KS.Reactor.Secret.PacketEncoder.EncodeClientTiming(System.UInt64,System.UInt64,System.Single,KS.Reactor.ksStreamBuffer)">
+        <member name="M:KS.Reactor.Secret.PacketEncoder.EncodeClientTiming(System.UInt64,System.UInt64,System.Double,KS.Reactor.ksStreamBuffer)">
             Write the client time and last processed frame number
             
             @param   ulong - Client time
             @param   ulong - Last processed frame number
-            @param   float - deltaTime since the last sent frame.
+            @param   double - Total of all update delta times in seconds since the room started syncing client frames
             @param   ksStreamBuffer - buffer
         </member>
         <member name="M:KS.Reactor.Secret.PacketEncoder.EncodeRoomRPC(System.UInt32,KS.Reactor.ksMultiType[],KS.Reactor.ksStreamBuffer)">
@@ -7228,6 +7239,7 @@
             </summary>
             <param name="udpClientId">UDP Client ID associated with the local player.</param>
             <param name="address">Room address</param>
+            <returns>Next UDP Frame Id</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:KS.Reactor.Secret.PacketIO.CloseUDP" -->
         <member name="M:KS.Reactor.Secret.PacketIO.UDPWrite(KS.Reactor.ksStreamBuffer,KS.Reactor.Secret.PacketIO.WriteHandler)">
@@ -7236,6 +7248,7 @@
             </summary>
             <param name="buffer">Buffer containing the message data.</param>
             <param name="callback">Callback to invoke once the message is sent.</param>
+            <returns>Next UDP Frame Id</returns>
         </member>
         <member name="M:KS.Reactor.Secret.PacketIO.CreateUDPSegmentPacket(KS.Reactor.ksStreamBuffer,System.UInt32,System.UInt32,System.Byte,System.Byte,KS.Reactor.Secret.UDPClientFrameHeader.ControlTypes)">
             <summary>

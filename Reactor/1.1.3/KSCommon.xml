@@ -11077,6 +11077,11 @@
             <param name="rotation">Rotation</param>
             <param name="scale">Scale</param>
         </member>
+        <member name="M:KS.Reactor.ksTransformState.#ctor(KS.Reactor.ksTransformState,System.Boolean)">
+            <summary>Copy another ksTransformState</summary>
+            <param name="other">Other transform to copy.</param>
+            <param name="copyDirtyFlags">Copy the other transform dirty flags.</param>
+        </member>
         <member name="M:KS.Reactor.ksTransformState.#ctor(KS.Reactor.ksIReadOnlyTransform)">
             <summary>Copy constructor</summary>
             <param name="other">Other transform to copy.</param>
@@ -11103,6 +11108,10 @@
         <member name="M:KS.Reactor.ksTransformState.SetFlag(KS.Reactor.ksReadOnlyTransformState.DirtyFlag)">
             <summary>Sets a dirty flag.</summary>
             <param name="flag">Flag to set.</param>
+        </member>
+        <member name="M:KS.Reactor.ksTransformState.ClearFlag(KS.Reactor.ksReadOnlyTransformState.DirtyFlag)">
+            <summary>Clears a dirty flag.</summary>
+            <param name="flag">Flag to clear.</param>
         </member>
         <member name="M:KS.Reactor.ksTransformState.ClearFlags">
             <summary>Clears the dirty flags.</summary>
@@ -12573,13 +12582,29 @@
             <summary>The new transform. Null if the transform did not change.</summary>
         </member>
         <member name="F:KS.Reactor.OwnedEntityUpdate.Teleported">
-            <summary>Did the entity teleport?</summary>
+            <summary>Did the entity teleport? This should never be true if the entity did not move.</summary>
         </member>
         <member name="F:KS.Reactor.OwnedEntityUpdate.Properties">
             <summary>Changed properties. Null if no properties changed.</summary>
         </member>
         <member name="F:KS.Reactor.OwnedEntityUpdate.Destroy">
             <summary>True if the client destroyed the entity.</summary>
+        </member>
+        <member name="F:KS.Reactor.OwnedEntityUpdate.UdpFrame">
+            <summary>The first UDP frame which included this update.</summary>
+        </member>
+        <member name="T:KS.Reactor.CombinedOwnedEntityUpdate">
+            <summary>An client-owned entity update containing several updates combined. </summary>
+        </member>
+        <member name="F:KS.Reactor.CombinedOwnedEntityUpdate.CombinedProperties">
+            <summary>A collection of property IDs which have been combined.</summary>
+        </member>
+        <member name="M:KS.Reactor.CombinedOwnedEntityUpdate.Combine(KS.Reactor.OwnedEntityUpdate)">
+            <summary>Combine a previous OwnedEntityUpdate into this update.</summary>
+            <param name="other">
+            A OwnedEntityUpdate with the same entity ID and a UDP frame less than the current UDP frame.
+            </param>
+            <returns>True if any data from the other frame was included.</returns>
         </member>
         <member name="T:KS.Reactor.PreserveAttribute">
             <summary>

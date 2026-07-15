@@ -50,7 +50,15 @@ namespace KS.Reactor.Client.Unity.Editor
         /// <param name="attemptDownload">Attempt to download a new server if the check fails.</param>
         /// <param name="logWarnings">Should warning messages for missing of invalid versioning written to the logs.</param>
         /// <returns>Result of the server check.</returns>
-        public FileStates Check(bool checkBuildFiles = true, bool checkServerFiles = true, bool attemptDownload = false, bool logWarnings = true)
+        /// <param name="versionUpdate">
+        /// If true and all other checks pass, the check fails and returns <see cref="FileStates.INVALID_VERSION"/>.
+        /// </param>
+        public FileStates Check(
+            bool checkBuildFiles = true,
+            bool checkServerFiles = true,
+            bool attemptDownload = false,
+            bool logWarnings = true,
+            bool versionUpdate = false)
         {
             // If the override server path is set, we do not validate files or versions.
             if (!ShowDownloadRequest ||
@@ -62,10 +70,8 @@ namespace KS.Reactor.Client.Unity.Editor
 
             string buildFileWarnings = "";
             string serverFileWarnings = "";
-            string versionWarnings = "";
             bool missingBuildFiles = false; 
             bool missingServerFiles = false;
-            bool versionMismatch = false;
             string reactorVersion = ksReactor.Version.ToString(false);
 
             if (checkBuildFiles)
@@ -129,11 +135,6 @@ namespace KS.Reactor.Client.Unity.Editor
                 {
                     ksLog.Warning(serverFileWarnings);
                 }
-
-                if (versionMismatch && !String.IsNullOrEmpty(versionWarnings))
-                {
-                    ksLog.Warning(versionWarnings);
-                }
             }
 
 
@@ -147,7 +148,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 {
                     downloadMessage = "Files required for launching local instances are missing.";
                 }
-                else if(versionMismatch)
+                else if(versionUpdate)
                 {
                     downloadMessage = "The installed Reactor server version does not match the Reactor client version.";
                 }
@@ -166,7 +167,7 @@ namespace KS.Reactor.Client.Unity.Editor
             {
                 return FileStates.MISSING_SERVER_FILES;
             }
-            if (versionMismatch)
+            if (versionUpdate)
             {
                 return FileStates.INVALID_VERSION;
             }

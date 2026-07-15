@@ -104,7 +104,8 @@ namespace KS.Reactor.Client.Unity.Editor
 #endif
 
             ksPublishService.Get().Start();
-            bool isNewOrUpdate = UpdateVersion();
+            ksVersion lastVersion;
+            bool isNewOrUpdate = UpdateVersion(out lastVersion);
             new ksIconManager().SetScriptIcons();
             ksServerProjectUpdater.Instance.GenerateMissingAsmDefs();
             ksPaths.FindCommonAndServerFolders();
@@ -140,7 +141,9 @@ namespace KS.Reactor.Client.Unity.Editor
                 ksPackageUpdater.Get().CheckForUpdates((bool updated) => {
                     if (!updated)
                     {
-                        ksServerInstaller.Get().Check(true, true, true, !isNewOrUpdate);
+                        // If the major, minor, or revision numbers changed, prompt the user to redownload the local server.
+                        bool serverVersionUpdate = !lastVersion.Equals(ksReactor.Version, ksVersion.Precision.REVISION);
+                        ksServerInstaller.Get().Check(true, true, true, !isNewOrUpdate, serverVersionUpdate);
                     }
                 });
 
@@ -156,22 +159,25 @@ namespace KS.Reactor.Client.Unity.Editor
         }
 
         /// <summary>Updates the project API version number.</summary>
+        /// <param name="lastVersion">
+        /// Set to the last Reactor version the project was opened with. 0.0.0 if this is a new install.
+        /// </param>
         /// <returns>True if the Reactor package is new or updated</returns>
-        private static bool UpdateVersion()
+        private static bool UpdateVersion(out ksVersion lastVersion)
         {
 #pragma warning disable 618//ignore obsolete
             ksVersion.Current = ksReactor.Version;
 #pragma warning restore
 
+            lastVersion = new ksVersion();
             bool isNewOrUpdate = false;
             string versionString = ksReactorConfig.Instance.Build.LastBuildVersion;
             if (versionString != "")
             {
-                ksVersion version = new ksVersion();
                 bool isValid = true;
                 try
                 {
-                    version = ksVersion.FromString(versionString);
+                    lastVersion = ksVersion.FromString(versionString);
                 }
                 catch (ArgumentException)
                 {
@@ -179,15 +185,15 @@ namespace KS.Reactor.Client.Unity.Editor
                         ") and may be incompatible with the current version (" + ksReactor.Version + ")");
                     isValid = false;
                 }
-                if (isValid && version != ksReactor.Version)
+                if (isValid && lastVersion != ksReactor.Version)
                 {
                     isNewOrUpdate = true;
-                    if (version > ksReactor.Version)
+                    if (lastVersion > ksReactor.Version)
                     {
-                        ksLog.Info(version + " > " + ksReactor.Version);
+                        ksLog.Info(lastVersion + " > " + ksReactor.Version);
                         if (!EditorUtility.DisplayDialog(
                             "Reactor Project Version Mismatch",
-                            "This project is using a newer Reactor version (" + version +
+                            "This project is using a newer Reactor version (" + lastVersion +
                             ") than the current version (" + ksReactor.Version +
                             ") and may be incompatible. Continue anyway?",
                             "OK",
@@ -196,7 +202,7 @@ namespace KS.Reactor.Client.Unity.Editor
                             EditorApplication.Exit(0);
                         }
                     }
-                    else if (version < new ksVersion(1, 0, 0, 0))
+                    else if (lastVersion < new ksVersion(1, 0, 0, 0))
                     {
                         DisplayUpgradeMessage("Cannot automatically upgrade projects older than " +
                             "1.0.0. You should upgrade to 1.0.0 before upgrading further.", true);
@@ -205,11 +211,11 @@ namespace KS.Reactor.Client.Unity.Editor
                     {
                         ksAnalytics.Get().TrackEvent(ksAnalytics.Events.UPGRADE);
 
-                        ksLog.Info(LOG_CHANNEL, "This project was using an old Reactor version " + version +
+                        ksLog.Info(LOG_CHANNEL, "This project was using an old Reactor version " + lastVersion +
                             ". Your project has been successfully updated to " + ksReactor.Version);
                     }
 
-                    if (!version.Equals(ksReactor.Version, ksVersion.Precision.REVISION))
+                    if (!lastVersion.Equals(ksReactor.Version, ksVersion.Precision.REVISION))
                     {
                         // When updating client versions, we clear the download check so that users
                         // are prompted to download the updated server.

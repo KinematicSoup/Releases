@@ -92,8 +92,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 // Restore expanded game objects.
                 if (ExpandedIds != null && ExpandedIds.Length > 0)
                 {
-                    ksReflectionObject expandMethod = SceneHierarchyRO.GetMethod("ExpandTreeViewItem",
-                        paramTypes: new Type[] { typeof(int), typeof(bool) });
+                    ksReflectionObject expandMethod = SceneHierarchyRO.GetMethod("ExpandTreeViewItem");
                     if (expandMethod.IsVoid)
                     {
                         return;
