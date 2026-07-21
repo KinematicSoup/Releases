@@ -323,6 +323,20 @@ namespace KS.SceneFusion.Client.Unity.Editor
             }
         }
 
+        /// <summary>
+        /// Called when our subscription status to a scene object changes. Removes a task from the activity indicator
+        /// if <paramref name="subscribed"/> is true.
+        /// </summary>
+        /// <param name="obj">obj whose subscription status changed.</param>
+        /// <param name="subscribed">True if we subscribed to receive the object's children.</param>
+        public override void OnConfirmSubscription(sfObject obj, bool subscribed)
+        {
+            if (subscribed && sfIActivityIndicator.Get() != null)
+            {
+                sfIActivityIndicator.Get().RemoveTask();
+            }
+        }
+
         /// <summary>Called every frame.</summary>
         /// <param name="deltaTime">deltaTime in seconds since the last frame.</param>
         private void Update(float deltaTime)
@@ -734,6 +748,10 @@ namespace KS.SceneFusion.Client.Unity.Editor
             }
             obj.Subscribe();
             m_localSubscriptionsProperty.Add(new sfReferenceProperty(obj.Id));
+            if (sfIActivityIndicator.Get() != null)
+            {
+                sfIActivityIndicator.Get().AddTask();
+            }
         }
 
         /// <summary>

@@ -106,8 +106,10 @@ namespace KS.SceneFusion.Client.Unity.Editor
             LIST_ADD = 1 << 11,
             [InspectorName("List Remove")]
             LIST_REMOVE = 1 << 12,
+            [InspectorName("Confirm Subscription")]
+            CONFIRM_SUBSCRIPTION = 1 << 13,
             [InspectorName("All Hierarchy")]
-            ALL_HIERARCHY = CREATE | CONFIRM_CREATE | DELETE | CONFIRM_DELETE | PARENT_CHANGE,
+            ALL_HIERARCHY = CREATE | CONFIRM_CREATE | DELETE | CONFIRM_DELETE | PARENT_CHANGE | CONFIRM_SUBSCRIPTION,
             [InspectorName("All Locks")]
             ALL_LOCKS = LOCK | UNLOCK | DIRECT_LOCK_CHANGE | LOCK_OWNER_CHANGE,
             [InspectorName("All Properties")]

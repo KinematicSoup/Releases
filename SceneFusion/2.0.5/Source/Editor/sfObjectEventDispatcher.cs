@@ -119,6 +119,7 @@ namespace KS.SceneFusion.Client.Unity.Editor
                 session.OnConfirmCreate += OnConfirmCreate;
                 session.OnDelete += OnDelete;
                 session.OnConfirmDelete += OnConfirmDelete;
+                session.OnConfirmSubscription += OnConfirmSubscription;
                 session.OnLock += OnLock;
                 session.OnUnlock += OnUnlock;
                 session.OnLockOwnerChange += OnLockOwnerChange;
@@ -159,6 +160,7 @@ namespace KS.SceneFusion.Client.Unity.Editor
                 session.OnConfirmCreate -= OnConfirmCreate;
                 session.OnDelete -= OnDelete;
                 session.OnConfirmDelete -= OnConfirmDelete;
+                session.OnConfirmSubscription -= OnConfirmSubscription;
                 session.OnLock -= OnLock;
                 session.OnUnlock -= OnUnlock;
                 session.OnLockOwnerChange -= OnLockOwnerChange;
@@ -373,6 +375,24 @@ namespace KS.SceneFusion.Client.Unity.Editor
             if (translator != null)
             {
                 translator.OnConfirmDelete(obj, unsubscribed);
+            }
+        }
+
+        /// <summary>
+        /// Calls <see cref="sfBaseTranslator.OnConfirmSubscription(sfObject, bool)"/> on the translator for an object.
+        /// </summary>
+        /// <param name="obj">obj whose subscription state changed.</param>
+        /// <param name="subscribed">True if we subscribed to receive the object's children.</param>
+        public void OnConfirmSubscription(sfObject obj, bool subscribed)
+        {
+            if (Config.Logging.HasFlag(sfConfig.EventLoggingFlags.CONFIRM_SUBSCRIPTION))
+            {
+                ksLog.Debug(this, "Confirm subscription " + obj + ", subscribed: " + subscribed);
+            }
+            sfBaseTranslator translator = GetTranslator(obj);
+            if (translator != null)
+            {
+                translator.OnConfirmSubscription(obj, subscribed);
             }
         }
 

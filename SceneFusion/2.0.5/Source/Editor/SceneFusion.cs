@@ -71,6 +71,7 @@ namespace KS.SceneFusion.Client.Unity.Editor
         protected override void Initialize()
         {
             m_service = CreateService();
+            m_service.PreConnect += PreConnect;
             m_service.OnConnect += OnConnect;
             m_service.OnDisconnect += OnDisconnect;
             sfILocalSession.Set(new sfLocalSession());

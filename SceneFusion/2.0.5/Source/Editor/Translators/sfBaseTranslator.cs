@@ -79,6 +79,11 @@ namespace KS.SceneFusion.Client.Unity.Editor
         /// </param>
         public virtual void OnConfirmDelete(sfObject obj, bool unsubscribed) { }
 
+        /// <summary>Called when our subscription status to an object changes.</summary>
+        /// <param name="obj">obj whose subscription status changed.</param>
+        /// <param name="subscribed">True if we subscribed to receive the object's children.</param>
+        public virtual void OnConfirmSubscription(sfObject obj, bool subscribed) { }
+
         /// <summary>Called when an object is locked by another user.</summary>
         /// <param name="obj">obj that was locked.</param>
         public virtual void OnLock(sfObject obj) { }

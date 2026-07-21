@@ -3712,7 +3712,7 @@ namespace KS.SceneFusion.Client.Unity.Editor
         {
             foreach (GameObject gameObject in m_tempUnlockedObjects)
             {
-                if (!PrefabUtility.IsPartOfPrefabAsset(gameObject))
+                if (gameObject != null && !PrefabUtility.IsPartOfPrefabAsset(gameObject))
                 {
                     sfObject obj = sfObjectMap.Get().GetSFObject(gameObject);
                     if (obj != null && obj.IsLocked)
