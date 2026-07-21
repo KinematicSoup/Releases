@@ -4787,6 +4787,11 @@
             <param name="socket">socket attempted the IO action</param>
             <param name="args">async event argurments</param>
         </member>
+        <member name="M:KS.Reactor.Client.ksTCPConnection.IOProcessCompletion(System.Net.Sockets.SocketAsyncEventArgs)">
+            <summary>Processes completed socket IO and prepares the next step.</summary>
+            <param name="args">Socket arguments</param>
+            <returns>True if the IO operation is not complete.</returns>
+        </member>
         <member name="M:KS.Reactor.Client.ksTCPConnection.Disconnect(System.Net.Sockets.SocketError)">
             <summary>Handle a disconnection error/completion event.</summary>
             <param name="error">Reason for disconnect</param>
