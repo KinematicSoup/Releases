@@ -192,6 +192,10 @@ namespace KS.Reactor.Client.Unity.Editor
         [NonSerialized]
         private bool m_isPublishing = false;
         [NonSerialized]
+        private long m_publishStartTime;
+        [NonSerialized]
+        private int m_sceneCount;
+        [NonSerialized]
         private object m_imagesLock = new object();
         [NonSerialized]
         private long m_imagesFetchTime = 0;
@@ -766,6 +770,7 @@ namespace KS.Reactor.Client.Unity.Editor
             {
                 if (!Directory.Exists(ksPaths.ImageDir))
                 {
+                    ksAnalytics.Get().TrackEvent(new ksAnalytics.Events.Publish(false, 0, sceneData.Count));
                     if (OnPublish != null)
                     {
                         OnPublish(null, "Unable to publish images. See console log for more information.");
@@ -774,11 +779,13 @@ namespace KS.Reactor.Client.Unity.Editor
                 }
 
                 m_isPublishing = true;
+                m_publishStartTime = DateTime.Now.Ticks;
+                m_sceneCount = sceneData.Count;
                 ksJSON request = new ksJSON();
                 request["projectId"] = m_selectedProjectId;
                 request["name"] = name;
                 request["version"] = version;
-                request["server"] = ksReactorConfig.Instance.Version.ToString(true);
+                request["server"] = ksReactorConfig.Instance.Version.ToString(true, false);
                 request["scenes"] = sceneData;
 
                 DirectoryInfo dirInfo = new DirectoryInfo(ksPaths.ImageDir);
@@ -802,9 +809,12 @@ namespace KS.Reactor.Client.Unity.Editor
         private void OnPublishImages(ksJSON response, string error)
         {
             m_isPublishing = false;
+            bool success = string.IsNullOrEmpty(error);
+            int duration = (int)((DateTime.Now.Ticks - m_publishStartTime) / TimeSpan.TicksPerSecond);
+            ksAnalytics.Get().TrackEvent(new ksAnalytics.Events.Publish(success, duration, m_sceneCount));
 
             // Error handling
-            if (!string.IsNullOrEmpty(error))
+            if (!success)
             {
                 lock (m_imagesLock)
                 {

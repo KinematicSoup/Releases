@@ -72,7 +72,7 @@ namespace KS.Reactor.Client.Unity.Editor
             string serverFileWarnings = "";
             bool missingBuildFiles = false; 
             bool missingServerFiles = false;
-            string reactorVersion = ksReactor.Version.ToString(false);
+            string reactorVersion = ksReactor.Version.ToString(false, false);
 
             if (checkBuildFiles)
             {
@@ -206,7 +206,7 @@ namespace KS.Reactor.Client.Unity.Editor
                     osExt = "-osx.tar.gz";
                 }
 
-                string serverFile = $"ReactorServer-{ksReactor.Version.ToString(false)}{osExt}";
+                string serverFile = $"ReactorServer-{ksReactor.Version.ToString(false, false)}{osExt}";
                 string url = $"{ksReactorConfig.Instance.Urls.Downloads}/localservers/{serverFile}";
                 ksLog.Info($"Downloading Reactor server from {url}");
                 UnityWebRequest www = new UnityWebRequest(url);
@@ -294,6 +294,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 // Save and then extract the server zip file.
                 File.WriteAllBytes(tempFile, downloadedData);
                 ksPathUtils.Unzip(tempFile, ksPaths.External);
+                ksAnalytics.Get().TrackEvent(ksAnalytics.Events.LOCAL_SERVER_INSTALL);
                 return true;
             }
             catch (Exception ex)

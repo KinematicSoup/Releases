@@ -127,7 +127,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 m_localServer.CheckServerProjectDirtyFlag();
                 if (m_localServer.CheckConfigAndRuntime(m_scene))
                 {
-                    ksAnalytics.Get().TrackDailyEvent(ksAnalytics.Events.LOCAL_CLUSTER_START);
+                    ksAnalytics.Get().TrackEvent(ksAnalytics.Events.LOCAL_CLUSTER_START);
                     ksLocalServer.Manager.StopClusterInstances();
                     m_localServer.StartCluster(
                         m_scene,

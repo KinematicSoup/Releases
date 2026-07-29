@@ -339,7 +339,7 @@ namespace KS.Reactor.Client.Unity.Editor
             m_localServer.CheckServerProjectDirtyFlag();
             if (m_localServer.CheckConfigAndRuntime(m_scene))
             {
-                ksAnalytics.Get().TrackDailyEvent(ksAnalytics.Events.LOCAL_SERVER_START);
+                ksAnalytics.Get().TrackEvent(ksAnalytics.Events.LOCAL_SERVER_START);
                 m_localServer.StartInstance(m_scene, m_room, m_port, m_protocol);
             }
         }

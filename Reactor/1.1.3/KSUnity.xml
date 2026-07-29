@@ -5077,9 +5077,10 @@
             <summary>Gets the version string, including prerelease and build number.</summary>
             <returns>version string</returns>
         </member>
-        <member name="M:KS.Reactor.Client.ksVersion.ToString(System.Boolean)">
+        <member name="M:KS.Reactor.Client.ksVersion.ToString(System.Boolean,System.Boolean)">
             <summary>Gets the version string.</summary>
-            <param name="fullVersion">False to exclude prerelease and build number from the version string.</param>
+            <param name="includePrerelease">False to exclude prerelease from the version string.</param>
+            <param name="includeBuild">False to exclude build number from the version string.</param>
             <returns>Versions string</returns>
         </member>
         <member name="M:KS.Reactor.Client.ksVersion.op_Equality(KS.Reactor.Client.ksVersion,KS.Reactor.Client.ksVersion)">

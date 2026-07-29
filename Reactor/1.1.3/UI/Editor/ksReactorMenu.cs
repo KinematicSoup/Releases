@@ -40,6 +40,7 @@ namespace KS.Reactor.Client.Unity.Editor
         [MenuItem(ksMenuNames.REACTOR + "Publishing", priority = ksStyle.WINDOW_GROUP + 2)]
         public static void OpenPublishWindow()
         {
+            ksAnalytics.Get().TrackEvent(ksAnalytics.Events.OPEN_PUBLISH_WINDOW);
             ksWindow.Open(ksWindow.REACTOR_PUBLISH, delegate (ksWindow window)
             {
                 window.titleContent = new GUIContent(" Publish", ksTextures.Logo);
@@ -52,6 +53,7 @@ namespace KS.Reactor.Client.Unity.Editor
         [MenuItem(ksMenuNames.REACTOR + "Servers", priority = ksStyle.WINDOW_GROUP + 3)]
         static void ServerManagers()
         {
+            ksAnalytics.Get().TrackEvent(ksAnalytics.Events.OPEN_SERVERS_WINDOW);
             ksWindow.Open(ksWindow.REACTOR_SERVERS, delegate (ksWindow window)
             {
                 window.titleContent = new GUIContent(" Servers", ksTextures.Logo);
@@ -140,6 +142,7 @@ namespace KS.Reactor.Client.Unity.Editor
         [MenuItem(ksMenuNames.REACTOR + "Local Server Logs", priority = ksStyle.TESTING_GROUP + 2)]
         static void ShowConsole()
         {
+            ksAnalytics.Get().TrackEvent(ksAnalytics.Events.OPEN_SERVER_LOGS_WINDOW);
             ksWindow.Open(ksWindow.REACTOR_CONSOLE, delegate (ksWindow window)
             {
                 window.titleContent = new GUIContent(" Logs", ksTextures.Logo);
@@ -152,6 +155,7 @@ namespace KS.Reactor.Client.Unity.Editor
         [MenuItem(ksMenuNames.REACTOR + "Getting Started", priority = ksStyle.MISC_GROUP)]
         private static void OpenGettingStarted()
         {
+            ksAnalytics.Get().TrackEvent(ksAnalytics.Events.OPEN_GETTING_STARTED_WINDOW);
             ksGettingStarted.Get().Open();
         }
 

@@ -155,7 +155,6 @@ namespace KS.Reactor.Client.Unity.Editor
                 }
             }
             ksServerProjectUpdater.Instance.UpdateOutputPath();
-
         }
 
         /// <summary>Updates the project API version number.</summary>
