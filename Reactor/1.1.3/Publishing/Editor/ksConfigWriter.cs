@@ -177,7 +177,15 @@ namespace KS.Reactor.Client.Unity.Editor
                 if (buildConfigs)
                 {
                     UpdateProgressBar("KS Reactor - Writing common configs", null, 0.4f);
-                    if (!BuildConfigs(rebuildAllConfigs))
+
+                    long buildStartTime = DateTime.Now.Ticks;
+                    int openedSceneCount, writtenSceneCount;
+                    bool success = BuildConfigs(rebuildAllConfigs, out openedSceneCount, out writtenSceneCount);
+                    int duration = (int)((DateTime.Now.Ticks - buildStartTime) / TimeSpan.TicksPerSecond);
+                    ksAnalytics.Get().TrackEvent(new ksAnalytics.Events.BuildConfigs(success, rebuildAllConfigs,
+                        duration, openedSceneCount, writtenSceneCount));
+
+                    if (!success)
                     {
                         ksBuildEvents.InvokePostBuild(false);
                         return false;
@@ -237,9 +245,14 @@ namespace KS.Reactor.Client.Unity.Editor
         /// Build the Reactor config files.
         /// </summary>
         /// <param name="rebuildAllConfigs">Delete existing config files and rebuild all of them.</param>
+        /// <param name="openedSceneCount">Set to the number of scenes opened during the build.</param>
+        /// <param name="writtenSceneCount">Set to the number of scene configs written during the build.</param>
         /// <returns>True if the build process completed without errors.</returns>
-        private bool BuildConfigs(bool rebuildAllConfigs)
+        private bool BuildConfigs(bool rebuildAllConfigs, out int openedSceneCount, out int writtenSceneCount)
         {
+            openedSceneCount = 0;
+            writtenSceneCount = 0;
+
             // Build the game config
             ksBuildEvents.InvokePreBuildConfig(new Scene());
             bool buildSuccess = WriteCommonConfig();
@@ -271,6 +284,7 @@ namespace KS.Reactor.Client.Unity.Editor
                 }
 
                 Scene scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+                openedSceneCount++;
                 UpdateProgressBar(
                     "KS Reactor - Writing scene configs (" + (i + 1) + " of " + scenePaths.Count + "): " + scene.name,
                     null, 0.6f
@@ -278,6 +292,10 @@ namespace KS.Reactor.Client.Unity.Editor
 
                 ksBuildEvents.InvokePreBuildConfig(scene);
                 SceneBuildResults result = WriteSceneConfig(scene);
+                if (result == SceneBuildResults.SUCCESS)
+                {
+                    writtenSceneCount++;
+                }
                 ksBuildEvents.InvokePostBuildConfig(scene, result != SceneBuildResults.ERROR);
                 if (result == SceneBuildResults.ERROR)
                 {

@@ -43,6 +43,12 @@ namespace KS.Reactor.Client.Unity.Editor
             }
         }
 
+        /// <summary>Tracks an analytics event when the register link is clicked.</summary>
+        protected override void RegisterClicked()
+        {
+            ksAnalytics.Get().TrackEvent(ksAnalytics.Events.CLICK_REGISTER);
+        }
+
         /// <summary>Get the menu to show when the user is logged in.</summary>
         /// <param name="window">Window to render the next menu in.</param>
         /// <returns>Menu to show when the user is logged in.</returns>

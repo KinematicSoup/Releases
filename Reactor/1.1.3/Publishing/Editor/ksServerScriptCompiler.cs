@@ -91,6 +91,8 @@ namespace KS.Reactor.Client.Unity.Editor
         private Thread m_thread;
         private bool m_playWhenCompiled = false;
         private bool m_restartServers = false;
+        private bool m_rebuild;
+        private long m_buildStartTime;
 
         /// <summary>Is the server runtime compiling?</summary>
         public bool IsCompiling
@@ -174,6 +176,8 @@ namespace KS.Reactor.Client.Unity.Editor
 
             ksBuildEvents.InvokePreBuildServer(configuration);
             m_configuration = configuration;
+            m_rebuild = rebuild;
+            m_buildStartTime = DateTime.Now.Ticks;
             Build(rebuild);
             EditorApplication.update += CheckCompileStatus;
             EditorApplication.playModeStateChanged += DisablePlayMode;
@@ -191,8 +195,18 @@ namespace KS.Reactor.Client.Unity.Editor
                 try
                 {
                     ksServerProjectWatcher.Get().RequiresServerBuild = false;
-                    ksBuildEvents.InvokePostBuildServer(m_configuration, m_result == CompileResults.SUCCESS);
-                    if (m_result == CompileResults.SUCCESS)
+
+                    bool success = m_result == CompileResults.SUCCESS;
+                    bool local = m_configuration == Configurations.LOCAL_RELEASE ||
+                        m_configuration == Configurations.LOCAL_DEBUG;
+                    bool debug = m_configuration == Configurations.LOCAL_DEBUG ||
+                        m_configuration == Configurations.ONLINE_DEBUG;
+                    int duration = (int)((DateTime.Now.Ticks - m_buildStartTime) / TimeSpan.TicksPerSecond);
+                    ksAnalytics.Get().TrackEvent(new ksAnalytics.Events.BuildServer(
+                        success, m_rebuild, local, debug, duration));
+
+                    ksBuildEvents.InvokePostBuildServer(m_configuration, success);
+                    if (success)
                     {
                         // Reload proxy scripts
                         AssetDatabase.Refresh();

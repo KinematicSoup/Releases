@@ -13,6 +13,7 @@ material is strictly forbidden unless prior written permission is obtained from
 KinematicSoup Technologies Incorporated.
 */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -174,15 +175,14 @@ namespace KS.Reactor.Client.Unity.Editor
                 if (configWriter.ScenePublishing.Count == 0)
                 {
                     OnPublish(null, "A Reactor project must contain at least one scene with a gameobject that has a ksRoomType component.");
+                    return;
                 }
-                else
+                if (m_service.PublishImage(m_imageName, m_imageVersion, configWriter.ScenePublishing))
                 {
-                    if (m_service.PublishImage(m_imageName, m_imageVersion, configWriter.ScenePublishing))
-                    {
-                        m_publishMessage = "Publishing...";
-                        m_publishMessageType = MessageType.Info;
-                        m_updatePublish = true;
-                    }
+                    m_publishMessage = "Publishing...";
+                    m_publishMessageType = MessageType.Info;
+                    m_updatePublish = true;
+                    return;
                 }
             }
         }

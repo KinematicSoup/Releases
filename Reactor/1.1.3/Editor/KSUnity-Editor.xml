@@ -17,18 +17,18 @@
         <member name="M:KS.Unity.Editor.Analytics.#ctor">
             <summary>Constructor</summary>
         </member>
-        <member name="M:KS.Unity.Editor.Analytics.TrackEvent(System.String,System.String,System.String)">
+        <member name="M:KS.Unity.Editor.Analytics.TrackEvent(KS.Unity.Editor.ksAnalyticsEvent,System.String,System.String)">
             <summary>Adds an event to be tracked with analytics.</summary>
             <param name="eventName">Event name</param>
             <param name="version">Version string to track in event.</param>
             <param name="token">Project token</param>
         </member>
-        <member name="M:KS.Unity.Editor.Analytics.TrackDailyEvent(System.String,System.String,System.String)">
+        <member name="M:KS.Unity.Editor.Analytics.TrackDailyEvent(KS.Unity.Editor.ksAnalyticsEvent,System.String,System.String)">
             <summary>
             Adds an event to be tracked with analytics if this is the first time an event with this name was
             tracked today using this function. The next day starts at midnight utc time.
             </summary>
-            <param name="eventName">Event name</param>
+            <param name="ev">Analytics event</param>
             <param name="version">Version string to track in event.</param>
             <param name="token">Project token</param>
         </member>
@@ -127,7 +127,7 @@
             <summary>Is analytics enabled?</summary>
         </member>
         <member name="T:KS.Unity.Editor.ksAnalytics.Events">
-            <summary>Analytics event names</summary>
+            <summary>Analytics events</summary>
         </member>
         <member name="F:KS.Unity.Editor.ksAnalytics.Events.INSTALL">
             <summary>The Reactor plugin was newly installed.</summary>
@@ -135,27 +135,152 @@
         <member name="F:KS.Unity.Editor.ksAnalytics.Events.UPGRADE">
             <summary>The user updated to a newer version of Reactor.</summary>
         </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.LOCAL_SERVER_INSTALL">
+            <summary>The user installed the local server.</summary>
+        </member>
         <member name="F:KS.Unity.Editor.ksAnalytics.Events.LOCAL_SERVER_START">
             <summary>The user started a local server. Sent at most once per day.</summary>
         </member>
         <member name="F:KS.Unity.Editor.ksAnalytics.Events.LOCAL_CLUSTER_START">
             <summary>The user started a local cluster. Sent at most once per day.</summary>
         </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.CLICK_DISCORD">
+            <summary>The user clicked the Discord link.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.CLICK_DOCS">
+            <summary>The user clicked the docs link.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.CLICK_REGISTER">
+            <summary>The user clicked the docs register link.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.CLICK_WEB_CONSOLE">
+            <summary>The user clicked the web console link.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.CLICK_YOUTUBE">
+            <summary>The user clicked the youtube link.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.OPEN_SERVERS_WINDOW">
+            <summary>The user opened the servers window.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.OPEN_PUBLISH_WINDOW">
+            <summary>The user opened the publishing window.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.OPEN_GETTING_STARTED_WINDOW">
+            <summary>The user opened the getting started window.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Events.OPEN_SERVER_LOGS_WINDOW">
+            <summary>The user opened the server logs window.</summary>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalytics.Events.BuildServer">
+            <summary>Analytics build server event.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Events.BuildServer.#ctor(System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+            <summary>Constructor</summary>
+            <param name="success">True if the build succeeded.</param>
+            <param name="rebuild">True if it was a full rebuild.</param>
+            <param name="local">True for local server builds, false for online builds.</param>
+            <param name="debug">True if it was a debug build.</param>
+            <param name="duration">Build duration in seconds.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Events.BuildServer.WriteProperties(KS.Reactor.ksJSON)">
+            <summary>Writes event-specific properties to a json object.</summary>
+            <param name="properties">Json object to write event-specific properties to</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalytics.Events.BuildConfigs">
+            <summary>Analytics build configs event.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Events.BuildConfigs.#ctor(System.Boolean,System.Boolean,System.Int32,System.Int32,System.Int32)">
+            <summary>Constructor</summary>
+            <param name="success">True if the build succeeded.</param>
+            <param name="rebuild">True if it was a full rebuild.</param>
+            <param name="duration">Build duration in seconds.</param>
+            <param name="openedSceneCount">Number of scenes opened during the build.</param>
+            <param name="writtenSceneCount">Number of scene configs written during the build.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Events.BuildConfigs.WriteProperties(KS.Reactor.ksJSON)">
+            <summary>Writes event-specific properties to a json object.</summary>
+            <param name="properties">Json object to write event-specific properties to</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalytics.Events.Publish">
+            <summary>Analytics publish event.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Events.Publish.#ctor(System.Boolean,System.Int32,System.Int32)">
+            <summary>Constructor</summary>
+            <param name="success">True if the build succeeded.</param>
+            <param name="duration">Build duration in seconds.</param>
+            <param name="sceneCount">Number of scenes published in the image.</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalytics.Events.Publish.WriteProperties(KS.Reactor.ksJSON)">
+            <summary>Writes event-specific properties to a json object.</summary>
+            <param name="properties">Json object to write event-specific properties to</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalytics.Categories">
+            <summary>Event categories</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Categories.INSTALLATION">
+            <summary>Category for installation events</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Categories.SERVER_START">
+            <summary>Category for server start events</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Categories.CLICK_LINK">
+            <summary>Category for click link events.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Categories.OPEN_WINDOW">
+            <summary>Category for open window events.</summary>
+        </member>
+        <member name="F:KS.Unity.Editor.ksAnalytics.Categories.BUILD">
+            <summary>Category for build events.</summary>
+        </member>
         <member name="M:KS.Unity.Editor.ksAnalytics.#ctor(System.String,System.String)">
             <summary>Constructor</summary>
-            <param name="token">Project token</param>
+            <param name="token">Token to identify the MixPanel project.</param>
             <param name="version">Version sting to send with event data.</param>
         </member>
-        <member name="M:KS.Unity.Editor.ksAnalytics.TrackEvent(System.String)">
+        <member name="M:KS.Unity.Editor.ksAnalytics.TrackEvent(KS.Unity.Editor.ksAnalyticsEvent)">
             <summary>Adds an event to be tracked with analytics.</summary>
-            <param name="eventName">Event name</param>
+            <param name="ev">Analytics event</param>
         </member>
-        <member name="M:KS.Unity.Editor.ksAnalytics.TrackDailyEvent(System.String)">
+        <member name="M:KS.Unity.Editor.ksAnalytics.TrackDailyEvent(KS.Unity.Editor.ksAnalyticsEvent)">
             <summary>
             Adds an event to be tracked with analytics if this is the first time an event with this name was
             tracked today using this function. The next day starts at midnight utc time.
             </summary>
             <param name="eventName">Event name</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalyticsEvent">
+            <summary>Contains data for an analytics event.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksAnalyticsEvent.Name">
+            <summary>Event name. Identifies the type of event.</summary>
+        </member>
+        <member name="P:KS.Unity.Editor.ksAnalyticsEvent.Category">
+            <summary>Event category. May be null.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalyticsEvent.#ctor(System.String,System.String)">
+            <summary>Constructor</summary>
+            <param name="name">Event name</param>
+            <param name="category">Event category</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalyticsEvent.WriteProperties(KS.Reactor.ksJSON)">
+            <summary>
+            Derived classes can implement this to write event-specific properties to a json object. The default
+            implementation does nothing.
+            </summary>
+            <param name="properties">Json object to write event-specific properties to.</param>
+        </member>
+        <member name="T:KS.Unity.Editor.ksAnalyticsDurationEvent">
+            <summary>Analytics event that uses MixPanel's built-in duration property.</summary>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalyticsDurationEvent.#ctor(System.String,System.Int32,System.String)">
+            <summary>Constructor</summary>
+            <param name="name">Event name</param>
+            <param name="duration">Event duration in seconds.</param>
+            <param name="category">Event category</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksAnalyticsDurationEvent.WriteProperties(KS.Reactor.ksJSON)">
+            <summary>Writes the built-in MixPanel duration property.</summary>
+            <param name="properties">Json object to write event-specific properties to.</param>
         </member>
         <member name="T:KS.Unity.Editor.ksAssetStorePackageUpdater`1">
             <summary>
@@ -237,6 +362,13 @@
         <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.DrawPasswordField(UnityEngine.Rect)">
             <summary>Draw the password field.</summary>
             <param name="rect">password field bounds</param>
+        </member>
+        <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.RegisterClicked">
+            <summary>
+            Called when the user clicks the Register link. Derived classes can implement this. The default
+            implementation does nothing. Derived classes that implement this should not open a URL here as that is done
+            automatically in the base class.
+            </summary>
         </member>
         <member name="M:KS.Unity.Editor.ksBaseLoginMenu`1.DrawFooter">
             <summary>
@@ -1787,18 +1919,21 @@
             <summary>Creates a link.</summary>
             <param name="text">text showing for the link.</param>
             <param name="url">url of the link.</param>
+            <returns>True if the link was clicked.</returns>
         </member>
         <member name="M:KS.Unity.Editor.ksStyle.Link(UnityEngine.Vector2,System.String,System.String)">
             <summary>Creates a link.</summary>
             <param name="position">position to place the link.</param>
             <param name="text">text showing for the link.</param>
             <param name="url">url of the link.</param>
+            <returns>True if the link was clicked.</returns>
         </member>
         <member name="M:KS.Unity.Editor.ksStyle.Link(UnityEngine.Rect,System.String,System.String)">
             <summary>Creates a link.</summary>
             <param name="rect">Rect to draw the link in.</param>
             <param name="text">Link text.</param>
             <param name="url">Url to link to.</param>
+            <returns>True if the link was clicked.</returns>
         </member>
         <member name="M:KS.Unity.Editor.ksStyle.OptionsButton">
             <summary>Draws an options button with 3 vertical dots.</summary>

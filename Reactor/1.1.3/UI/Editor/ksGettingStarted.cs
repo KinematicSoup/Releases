@@ -97,7 +97,8 @@ namespace KS.Reactor.Client.Unity.Editor
             EditorGUILayout.LabelField("• The subscription account can invite other users to their Reactor projects.", paragraph);
             EditorGUILayout.Space();
             EditorGUI.indentLevel++;
-            ksStyle.Link("Create a Reactor Account", ksReactorConfig.Instance.Urls.WebConsole + "/ksauthentication/login?register=1");
+            Link("Create a Reactor Account", ksReactorConfig.Instance.Urls.WebConsole + "/ksauthentication/login?register=1",
+                ksAnalytics.Events.CLICK_REGISTER);
             EditorGUI.indentLevel--;
 
             // Links
@@ -106,10 +107,10 @@ namespace KS.Reactor.Client.Unity.Editor
             EditorGUILayout.LabelField("Links", heading);
             EditorGUILayout.Space();
             EditorGUI.indentLevel++;
-            ksStyle.Link("Tutorials and Documentation", ksReactorConfig.Instance.Urls.Documentation);
-            ksStyle.Link("Web Console", ksReactorConfig.Instance.Urls.WebConsole);
-            ksStyle.Link("Discord Support", ksReactorConfig.Instance.Urls.Discord);
-            ksStyle.Link("Youtube Tutorials", ksReactorConfig.Instance.Urls.Youtube);
+            Link("Tutorials and Documentation", ksReactorConfig.Instance.Urls.Documentation, ksAnalytics.Events.CLICK_DOCS);
+            Link("Web Console", ksReactorConfig.Instance.Urls.WebConsole, ksAnalytics.Events.CLICK_WEB_CONSOLE);
+            Link("Discord Support", ksReactorConfig.Instance.Urls.Discord, ksAnalytics.Events.CLICK_DISCORD);
+            Link("Youtube Tutorials", ksReactorConfig.Instance.Urls.Youtube, ksAnalytics.Events.CLICK_YOUTUBE);
             EditorGUI.indentLevel--;
 
             // Notes
@@ -134,6 +135,18 @@ namespace KS.Reactor.Client.Unity.Editor
             {
                 m_showGettingStarted.boolValue = show;
                 m_config.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        /// <summary>Draws a link that opens a URL and tracks an analytics event when clicked.</summary>
+        /// <param name="text">Link text</param>
+        /// <param name="url">Url to open when clicked.</param>
+        /// <param name="analyticsEvent">Analytics event to track when clicked.</param>
+        private void Link(string text, string url, ksAnalyticsEvent analyticsEvent)
+        {
+            if (ksStyle.Link(text, url))
+            {
+                ksAnalytics.Get().TrackEvent(analyticsEvent);
             }
         }
     }
