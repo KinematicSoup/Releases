@@ -1,6 +1,17 @@
 # Changelog
 
-## [1.1.3-0] - 2026-07-09
+## [1.1.3+2] - 2026-07-30
+
+### Fixed
+- ksEntityComponent "Destroy on Owner Disconnect" is now applied to the server.
+- Fixed an encoding bug when entity owners updated more than one entity at a time.
+
+## [1.1.3+1] - 2026-07-28
+
+### Fixed
+- Fixed a TCP client packet generation error when large packets and significant network delay occurs.
+
+## [1.1.3] - 2026-07-09
 
 ### Added
 - Added experimental UDP client frame data syncing which can be enabled/disabled in the ksRoomType inspector.
@@ -29,8 +40,7 @@
 - Fixed a bug where server transform changes to owned entities would not be synced if the entity owner stopped updating the entity.
 - Added guards against multithreaded encoder server crashes.
 
-
-## [1.1.2-0] - 2026-03-05
+## [1.1.2] - 2026-03-05
 
 ### Added
 - Reactor Getting Started screen
@@ -57,7 +67,7 @@
 - Reconnecting on the same frame you disconnect or fail to connect works now and will not get a ROOM_INITIALIZE error.
 - ksNetCounters.Types.TX_EVENTS and TX_INPUT track transmitted RPC events and input now instead of always reporting 0.
 
-## [1.1.1-0] - 2026-01-09
+## [1.1.1] - 2026-01-09
 
 ### Added
 - Local Reactor server and build scripts for OSX arm64 operating systems.
@@ -70,7 +80,7 @@
 ### Fixed
 - Updated ksUnityRigidbody.AngularVelocity to always return values in degrees per second as described in the Reactor documentation.
 
-## [1.1.0-1] - 2025-10-10
+## [1.1.0+1] - 2025-10-10
 
 ### Added
 - Compression is enabled for the local development server.
@@ -89,7 +99,7 @@
 ### Removed
 - Removed public m_object field from ksMultiType.
 
-## [1.1.0-0] - 2025-08-14
+## [1.1.0] - 2025-08-14
 
 ### Added
 - Added support for Unity 6 and 6.1

@@ -162,7 +162,7 @@ namespace KS.Reactor.Client.Unity
 #else
         [NonSerialized] // Needed to prevent serialization during domain reloads.
 #endif
-        private ksSerializableVersion m_version = new ksVersion(1, 1, 3, 1);  // Reactor 1.1.3+1
+        private ksSerializableVersion m_version = new ksVersion(1, 1, 3, 2);  // Reactor 1.1.3+2
 
         /// <summary>Show the Reactor getting started screen when Unity launches.</summary>
         [Tooltip("Show the Reactor Getting Started screen when opening this project.")]
