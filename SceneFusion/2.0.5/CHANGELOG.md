@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.5] - 2026-07-30
+
+### Added
+- Added support for Unity 6.3 - 6.5.
+
+### Fixed
+- Fixed a null reference exception when creating a prefab variant with a different material than the source prefab with full prefab syncing enabled.
+- Fixed a bug causing the root of a prefab to be locked after changing a prefab child's parent with full prefab syncing enabled.
+- Terrain settings 'Minimum Detail Limit' and 'Minimum Complexity Limit' sync now.
+
 ## [2.0.4] - 2025-11-14
 
 ### Added
