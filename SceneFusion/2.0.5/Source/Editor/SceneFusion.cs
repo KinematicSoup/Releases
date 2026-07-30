@@ -148,10 +148,6 @@ namespace KS.SceneFusion.Client.Unity.Editor
                     {
                         m_service.WebService.SFToken = m_reconnectToken;
                     }
-                    if (sfIActivityIndicator.Get() != null)
-                    {
-                        sfIActivityIndicator.Get().AddTask();
-                    }
                     m_service.JoinSession(m_reconnectData.Info);
                     m_reconnectData.Info = null;
                     m_reconnectToken = null;
