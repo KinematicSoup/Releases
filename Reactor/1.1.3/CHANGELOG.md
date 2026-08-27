@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3+3] - 2026-08-27
+
+### Fixed
+- Fixed a bug where Time.ProcessedServerDelta and ProcessedServerUnscaledDelta where always zero.
+- Fixed a bug causing movement for entities owned by remote players with the transform permission to not be smooth when UDP client frames was enabled.
+- Fixed a server crash when setting a property to a string array containing a null element.
+- Fixed a null reference exception when comparing two string array ksMultitypes containing null elements.
+
 ## [1.1.3+2] - 2026-07-30
 
 ### Fixed

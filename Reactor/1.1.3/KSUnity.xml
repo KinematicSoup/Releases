@@ -7058,6 +7058,7 @@
             Complete the client frame data header by updating the data length.
             
             @param   ksStreamBuffer - buffer
+            @return  int size of the client frame body.
         </member>
         <member name="M:KS.Reactor.Secret.PacketEncoder.EncodeClientTiming(System.UInt64,System.UInt64,System.Double,KS.Reactor.ksStreamBuffer)">
             Write the client time and last processed frame number
